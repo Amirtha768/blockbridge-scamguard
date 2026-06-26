@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles.css';
 import '../product.css';
-
-const API = '"http://localhost:5001"';
+import API from '../config.js';
 
 function useAuth() {
   const token = localStorage.getItem('bb_token');

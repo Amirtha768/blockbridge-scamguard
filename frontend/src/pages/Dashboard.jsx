@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import '../styles.css';
 import '../dashboard.css';
+import API from '../config.js';
 
-const API = '"http://localhost:5001"';
 const FREE_LIMIT = 5;
 
 function getUser() {
