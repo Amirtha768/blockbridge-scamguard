@@ -143,7 +143,7 @@ function ScannerView({ scanner, token, onBack, onScanDone, isPro }) {
 
 function Dashboard() {
   const token = localStorage.getItem('bb_token');
-  const user  = getUser();
+  const [user, setUser] = useState(getUser());
 
   const [activeScanner, setActiveScanner] = useState(null);
   const [quota, setQuota]                 = useState(null);
@@ -162,8 +162,7 @@ function Dashboard() {
       if (res.ok) {
         const userData = await res.json();
         localStorage.setItem('bb_user', JSON.stringify(userData));
-        // Force re-render by updating state if needed
-        window.location.reload();
+        setUser(userData); // Update state instead of reloading page
       }
     } catch (err) {
       console.error('Failed to refresh user data:', err);

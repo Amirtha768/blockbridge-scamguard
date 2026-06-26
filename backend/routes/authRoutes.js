@@ -29,7 +29,14 @@ router.post('/register', async (req, res) => {
     );
     res.status(201).json({
       token,
-      user: { id: result.insertId, name, email, plan: 'FREE', subscription_status: 'NONE' },
+      user: { 
+        id: result.insertId, 
+        name, 
+        email, 
+        plan: 'FREE', 
+        subscription_status: 'NONE',
+        expiry_date: null
+      },
     });
   } catch (err) {
     console.error(err);
@@ -64,8 +71,9 @@ router.post('/login', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        plan: user.plan,
-        subscription_status: user.subscription_status,
+        plan: user.plan || 'FREE',
+        subscription_status: user.subscription_status || 'NONE',
+        expiry_date: user.expiry_date || null
       },
     });
   } catch (err) {
