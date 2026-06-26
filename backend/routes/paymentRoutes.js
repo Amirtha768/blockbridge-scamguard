@@ -25,8 +25,13 @@ router.post('/create-order', authenticate, async (req, res) => {
     return res.status(400).json({ message: 'Invalid plan selected.' });
 
   const keyId = process.env.RAZORPAY_KEY_ID || '';
-  if (!razorpay || !keyId || keyId.startsWith('rzp_test_placeholder')) {
-    return res.status(503).json({ message: 'Payment gateway not configured yet. Please add Razorpay keys to .env to enable payments.' });
+  
+  // Block only if keys are completely missing or obvious placeholders
+  if (!razorpay || !keyId || keyId.includes('PASTE_YOUR') || keyId === 'rzp_test_placeholder') {
+    return res.status(503).json({ 
+      message: 'Payment gateway not configured. Add Razorpay keys to .env file.',
+      hint: 'Get keys from dashboard.razorpay.com'
+    });
   }
 
   try {
