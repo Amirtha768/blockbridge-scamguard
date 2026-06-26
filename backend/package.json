@@ -1,0 +1,23 @@
+{
+  "name": "blockbridge-backend",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.2.0",
+    "mysql2": "^3.4.0",
+    "razorpay": "^2.9.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
