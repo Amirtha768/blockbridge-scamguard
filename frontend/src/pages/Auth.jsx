@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import '../styles.css';
 import '../auth.css';
+import API from '../config.js';
 
 function validate(form, isLogin) {
   const errs = {};
@@ -46,7 +47,7 @@ function Auth() {
         ? { email: form.email, password: form.password }
         : { name: form.name, email: form.email, password: form.password };
 
-      const res = await fetch(`"http://localhost:5001"${endpoint}`, {
+      const res = await fetch(`${API}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
