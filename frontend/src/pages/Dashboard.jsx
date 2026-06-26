@@ -236,8 +236,15 @@ function Dashboard() {
             scanner={activeScanner}
             token={token}
             isPro={isPro}
-            onBack={() => { setActiveScanner(null); refreshQuota(); }}
-            onScanDone={refreshQuota}
+            onBack={() => { 
+              setActiveScanner(null); 
+              // Refresh quota immediately when returning to dashboard
+              setTimeout(() => refreshQuota(), 100);
+            }}
+            onScanDone={() => {
+              // Refresh quota after each scan
+              refreshQuota();
+            }}
           />
         </div>
       </div>
