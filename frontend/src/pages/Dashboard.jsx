@@ -147,16 +147,28 @@ function Dashboard() {
 
   const [activeScanner, setActiveScanner] = useState(null);
   const [quota, setQuota]                 = useState(null);
-  const [quickUrl, setQuickUrl]           = useState('');
-  const [quickResult, setQuickResult]     = useState(null);
-  const [quickLoading, setQuickLoading]   = useState(false);
-  const [quickError, setQuickError]       = useState('');
-  const [limitHit, setLimitHit]           = useState(false);
 
   useEffect(() => {
     if (!token || !user) { window.location.hash = '#/login'; return; }
+    refreshUserData();
     refreshQuota();
   }, []);
+
+  async function refreshUserData() {
+    try {
+      const res = await fetch(`${API}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        localStorage.setItem('bb_user', JSON.stringify(userData));
+        // Force re-render by updating state if needed
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error('Failed to refresh user data:', err);
+    }
+  }
 
   if (!token || !user) return null;
 
@@ -179,29 +191,7 @@ function Dashboard() {
   function openScanner(scanner) {
     if (scanner.type === null) { window.location.hash = '#/pricing'; return; }
     if (scanner.premium && !isPro) { window.location.hash = '#/pricing'; return; }
-    setLimitHit(false);
     setActiveScanner(scanner);
-  }
-
-  async function handleQuickScan(e) {
-    e.preventDefault();
-    setQuickLoading(true); setQuickError(''); setQuickResult(null); setLimitHit(false);
-    try {
-      const res  = await fetch(`${API}/api/scan/url`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ url: quickUrl }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        if (data.upgrade) setLimitHit(true);
-        else setQuickError(data.message || 'Scan failed.');
-      } else {
-        setQuickResult(data);
-      }
-      refreshQuota();
-    } catch { setQuickError('Unable to connect to server.'); }
-    finally { setQuickLoading(false); }
   }
 
   const Topbar = () => (
@@ -257,50 +247,21 @@ function Dashboard() {
             <span className="stat-lbl">Scans Today</span>
           </div>
           <div className="stat-pill">
-            <span className="stat-val">{quota ? (quota.scansLeft !== null ? quota.scansLeft : '∞') : '—'}</span>
-            <span className="stat-lbl">Scans Left</span>
-          </div>
-          <div className="stat-pill">
-            <span className="stat-val">{isPro ? '∞' : `${FREE_LIMIT}/day`}</span>
-            <span className="stat-lbl">Daily Limit</span>
+            <span className="stat-val">{isPro ? '∞' : (quota ? (quota.scansLeft ?? 0) : '—')}</span>
+            <span className="stat-lbl">{isPro ? 'Unlimited' : 'Scans Left'}</span>
           </div>
           <div className="stat-pill">
             <span className="stat-val">{plan}</span>
             <span className="stat-lbl">Current Plan</span>
           </div>
+          <div className="stat-pill">
+            <span className="stat-val">{isPro && user.expiry_date ? new Date(user.expiry_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : (isPro ? 'Active' : `${FREE_LIMIT}/day`)}</span>
+            <span className="stat-lbl">{isPro && user.expiry_date ? 'Expires' : 'Daily Limit'}</span>
+          </div>
         </div>
 
         <div className="dash-body">
           <div className="dash-main">
-
-            {/* Quick scan or upgrade wall */}
-            <div className="dash-card url-scan-card">
-              <p className="section-label">Quick URL Scan</p>
-              {limitHit ? <UpgradeWall /> : (
-                <>
-                  <form className="url-scan-form" onSubmit={handleQuickScan}>
-                    <input
-                      type="text" placeholder="https://suspicious-site.com"
-                      value={quickUrl} onChange={e => setQuickUrl(e.target.value)} required
-                    />
-                    <button type="submit" className="button button-primary" disabled={quickLoading}>
-                      {quickLoading ? <span className="spinner" /> : 'Analyze Now'}
-                    </button>
-                  </form>
-                  {quickError && <p className="scan-error">{quickError}</p>}
-                  {quickResult && (
-                    <div className={`scan-result ${quickResult.status}`}>
-                      <div className="result-row">
-                        <span className={`result-badge ${quickResult.status}`}>{quickResult.status?.toUpperCase()}</span>
-                        {quickResult.score !== undefined && <ScoreBar score={quickResult.score} />}
-                      </div>
-                      {quickResult.explanation && <p className="result-note">{quickResult.explanation}</p>}
-                      {quickResult.recommendation && <p className="result-rec">💡 {quickResult.recommendation}</p>}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
 
             {/* Scanners */}
             <div className="dash-card">
@@ -338,11 +299,35 @@ function Dashboard() {
                     Upgrade to Pro — ₹199/mo
                   </a>
                 </>
+              ) : plan === 'PRO' ? (
+                <>
+                  <ul className="plan-perks">
+                    <li>✓ Unlimited scans</li>
+                    <li>✓ 5 scanners unlocked</li>
+                    <li>✓ AI risk explanation</li>
+                    <li>✓ 30 days history</li>
+                  </ul>
+                  <div style={{ marginTop: '16px', padding: '12px', background: '#f8f9fa', borderRadius: '8px' }}>
+                    <p style={{ fontSize: '13px', color: '#666', marginBottom: '8px' }}>
+                      <strong>Upgrade to Business (₹499/mo) for:</strong>
+                    </p>
+                    <ul style={{ fontSize: '12px', color: '#666', paddingLeft: '18px' }}>
+                      <li>Team dashboard & collaboration</li>
+                      <li>API access for integration</li>
+                      <li>Bulk scanning capabilities</li>
+                      <li>Priority 24/7 support</li>
+                    </ul>
+                    <a href="#/pricing" className="button button-secondary" style={{ width: '100%', justifyContent: 'center', marginTop: '10px', fontSize: '13px' }}>
+                      View Business Plan
+                    </a>
+                  </div>
+                </>
               ) : (
                 <ul className="plan-perks">
-                  <li>✓ Unlimited scans</li>
-                  <li>✓ All 7 scanners</li>
-                  <li>✓ AI risk explanation</li>
+                  <li>✓ Everything in Pro</li>
+                  <li>✓ Team dashboard</li>
+                  <li>✓ API access</li>
+                  <li>✓ Bulk scanning</li>
                   <li>✓ Priority support</li>
                 </ul>
               )}

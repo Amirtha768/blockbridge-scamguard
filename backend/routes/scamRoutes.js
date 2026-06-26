@@ -30,11 +30,26 @@ async function checkQuota(req, res) {
   if (!rows.length) { res.status(404).json({ message: 'User not found.' }); return false; }
 
   const user = rows[0];
-  if (user.plan !== 'FREE') return true;
-
-  const today     = getLocalDate();
+  const today = getLocalDate();
   const resetDate = toDateStr(user.scans_reset_date);
 
+  // For PRO/BUSINESS users, track scans but no limit
+  if (user.plan !== 'FREE') {
+    if (resetDate !== today) {
+      await db.execute(
+        'UPDATE users SET scans_today = 1, scans_reset_date = ? WHERE id = ?',
+        [today, req.user.id]
+      );
+    } else {
+      await db.execute(
+        'UPDATE users SET scans_today = scans_today + 1 WHERE id = ?',
+        [req.user.id]
+      );
+    }
+    return true;
+  }
+
+  // For FREE users, check limit
   if (resetDate !== today) {
     await db.execute(
       'UPDATE users SET scans_today = 1, scans_reset_date = ? WHERE id = ?',

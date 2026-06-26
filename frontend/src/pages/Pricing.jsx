@@ -21,7 +21,13 @@ const plans = [
     price: '₹199',
     period: '/ month',
     badge: '⭐ Most Popular',
-    features: ['Unlimited URL scans', 'WhatsApp scam detection', 'Email phishing scanner', 'QR code scanner', 'Screenshot scanner', 'AI risk explanation', '30 days history'],
+    features: [
+      'Unlimited scans daily',
+      '5 scanner types (URL, WhatsApp, Email, QR, Screenshot)',
+      'AI-powered risk analysis',
+      '30 days scan history',
+      'Email support'
+    ],
     target: 'Regular users, job seekers & professionals',
     btn: 'Upgrade to Pro',
     btnClass: 'button-primary',
@@ -32,7 +38,17 @@ const plans = [
     price: '₹499',
     period: '/ month',
     badge: '🏆 Best Value',
-    features: ['Everything in Pro', 'Team dashboard', 'Real-time alerts', 'API access', 'Bulk scanning', 'Priority support', 'Advanced AI protection'],
+    features: [
+      'Everything in Pro',
+      'Job scam detector',
+      'Investment fraud detector',
+      'Team dashboard & collaboration',
+      'API access for integration',
+      'Bulk scanning (100+ scans)',
+      'Priority 24/7 support',
+      'Advanced AI protection',
+      '90 days scan history'
+    ],
     target: 'Startups, companies & institutions',
     btn: 'Go Business',
     btnClass: 'button-secondary',
@@ -41,12 +57,13 @@ const plans = [
 
 const steps = [
   { n: '1', title: 'Select a plan', desc: 'Choose Free, Pro, or Business based on your needs.' },
-  { n: '2', title: 'Complete secure payment', desc: 'Pay safely via Razorpay with any UPI, card, or net banking.' },
+  { n: '2', title: 'Complete secure payment', desc: 'Pay safely via UPI (GPay, PhonePe), card, or net banking through Razorpay.' },
   { n: '3', title: 'Account activated instantly', desc: 'Your plan is live the moment payment is confirmed.' },
   { n: '4', title: 'Access unlocked in dashboard', desc: 'All features are immediately available in your account.' },
 ];
 
 const faqs = [
+  { q: 'What\'s the difference between Pro and Business?', a: 'Pro (₹199/mo) includes 5 scanners and unlimited scans - perfect for individuals. Business (₹499/mo) adds Job & Investment fraud detectors, Team dashboard, API access, and Priority support - ideal for teams and companies.' },
   { q: 'Can I cancel anytime?', a: 'Yes. Cancel anytime from your dashboard. No questions asked.' },
   { q: 'Will I get a refund?', a: 'Refunds are available within 7 days of payment if paid features haven\'t been used.' },
   { q: 'Is payment secure?', a: 'All payments are processed via Razorpay with 256-bit SSL encryption. We never store your card details.' },
@@ -54,17 +71,20 @@ const faqs = [
 ];
 
 const comparison = [
-  { feature: 'Daily scans',        free: '5 scans',  pro: 'Unlimited', biz: 'Unlimited' },
-  { feature: 'URL Scanner',        free: '✓',        pro: '✓',         biz: '✓' },
-  { feature: 'WhatsApp Scanner',   free: '—',        pro: '✓',         biz: '✓' },
-  { feature: 'Email Scanner',      free: '—',        pro: '✓',         biz: '✓' },
-  { feature: 'QR Scanner',         free: '—',        pro: '✓',         biz: '✓' },
-  { feature: 'Screenshot Scanner', free: '—',        pro: '✓',         biz: '✓' },
-  { feature: 'AI Risk Explanation',free: '—',        pro: '✓',         biz: '✓' },
-  { feature: 'History',            free: 'Limited',  pro: '30 days',   biz: '90 days' },
-  { feature: 'Team Dashboard',     free: '—',        pro: '—',         biz: '✓' },
-  { feature: 'API Access',         free: '—',        pro: '—',         biz: '✓' },
-  { feature: 'Priority Support',   free: '—',        pro: '—',         biz: '✓' },
+  { feature: 'Daily scans',            free: '5 scans',  pro: 'Unlimited', biz: 'Unlimited' },
+  { feature: 'URL Scanner',            free: '✓',        pro: '✓',         biz: '✓' },
+  { feature: 'WhatsApp Scanner',       free: '—',        pro: '✓',         biz: '✓' },
+  { feature: 'Email Scanner',          free: '—',        pro: '✓',         biz: '✓' },
+  { feature: 'QR Scanner',             free: '—',        pro: '✓',         biz: '✓' },
+  { feature: 'Screenshot Scanner',     free: '—',        pro: '✓',         biz: '✓' },
+  { feature: 'Job Scam Detector',      free: '—',        pro: '—',         biz: '✓' },
+  { feature: 'Investment Detector',    free: '—',        pro: '—',         biz: '✓' },
+  { feature: 'AI Risk Explanation',    free: '—',        pro: '✓',         biz: '✓' },
+  { feature: 'Scan History',           free: 'Limited',  pro: '30 days',   biz: '90 days' },
+  { feature: 'Team Dashboard',         free: '—',        pro: '—',         biz: '✓' },
+  { feature: 'API Access',             free: '—',        pro: '—',         biz: '✓' },
+  { feature: 'Bulk Scanning (100+)',   free: '—',        pro: '—',         biz: '✓' },
+  { feature: 'Support',                free: 'Email',    pro: 'Email',     biz: 'Priority 24/7' },
 ];
 
 function loadRazorpayScript() {
@@ -124,6 +144,26 @@ function Pricing() {
         order_id: data.order_id,
         name: 'BlockBridge ScamGuard AI',
         description: `${plan.title} Plan Subscription`,
+        prefill: {
+          method: 'upi'
+        },
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: 'Pay using UPI',
+                instruments: [
+                  { method: 'upi' },
+                  { method: 'wallet', wallets: ['googlepay', 'phonepe', 'paytm'] }
+                ]
+              },
+              card: { name: 'Credit/Debit Cards' },
+              netbanking: { name: 'Netbanking' }
+            },
+            sequence: ['upi', 'card', 'netbanking'],
+            preferences: { show_default_blocks: true }
+          }
+        },
         theme: { color: '#4f8cff' },
         handler: async function (response) {
           const verify = await fetch(`${API}/api/payment/verify`, {
@@ -136,8 +176,19 @@ function Pricing() {
               plan: plan.id,
             }),
           });
-          if (verify.ok) setPaySuccess(true);
-          else alert('Payment verification failed. Contact support.');
+          if (verify.ok) {
+            // Fetch updated user data from server
+            const userRes = await fetch(`${API}/api/auth/me`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (userRes.ok) {
+              const userData = await userRes.json();
+              localStorage.setItem('bb_user', JSON.stringify(userData));
+            }
+            setPaySuccess(true);
+          } else {
+            alert('Payment verification failed. Contact support.');
+          }
         },
         modal: { ondismiss: () => setLoading('') },
       };
