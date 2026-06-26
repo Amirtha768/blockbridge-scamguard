@@ -191,6 +191,10 @@ function Dashboard() {
 
   const plan  = user.plan || 'FREE';
   const isPro = plan !== 'FREE';
+  
+  // TEMPORARY FIX: Calculate correct scansLeft for forced FREE users
+  const scansUsed = quota?.scansUsed ?? 0;
+  const calculatedScansLeft = isPro ? null : Math.max(0, 5 - scansUsed);
 
   function refreshQuota() {
     fetch(`${API}/api/scan/quota`, { headers: { Authorization: `Bearer ${token}` } })
@@ -260,11 +264,11 @@ function Dashboard() {
         {/* Stats */}
         <div className="dash-stats">
           <div className="stat-pill">
-            <span className="stat-val">{quota ? (quota.scansUsed ?? 0) : '—'}</span>
+            <span className="stat-val">{scansUsed}</span>
             <span className="stat-lbl">Scans Today</span>
           </div>
           <div className="stat-pill">
-            <span className="stat-val">{isPro ? '∞' : (quota ? (quota.scansLeft ?? 0) : '—')}</span>
+            <span className="stat-val">{isPro ? '∞' : calculatedScansLeft}</span>
             <span className="stat-lbl">{isPro ? 'Unlimited' : 'Scans Left'}</span>
           </div>
           <div className="stat-pill">
