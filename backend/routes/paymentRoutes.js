@@ -6,10 +6,10 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Only initialize Razorpay if keys are present
+const razorpay = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
+  ? new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET })
+  : null;
 
 const PLAN_AMOUNTS = {
   PRO: 19900,      // ₹199 in paise
@@ -25,7 +25,7 @@ router.post('/create-order', authenticate, async (req, res) => {
     return res.status(400).json({ message: 'Invalid plan selected.' });
 
   const keyId = process.env.RAZORPAY_KEY_ID || '';
-  if (!keyId || keyId.startsWith('rzp_test_placeholder')) {
+  if (!razorpay || !keyId || keyId.startsWith('rzp_test_placeholder')) {
     return res.status(503).json({ message: 'Payment gateway not configured yet. Please add Razorpay keys to .env to enable payments.' });
   }
 
