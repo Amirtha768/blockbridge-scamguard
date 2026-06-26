@@ -23,6 +23,8 @@ export async function initDB() {
       plan ENUM('FREE','PRO','BUSINESS') DEFAULT 'FREE',
       subscription_status ENUM('ACTIVE','EXPIRED','NONE') DEFAULT 'NONE',
       expiry_date DATETIME DEFAULT NULL,
+      scans_today INT DEFAULT 0,
+      scans_reset_date DATE DEFAULT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
