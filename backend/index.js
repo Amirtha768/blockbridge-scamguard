@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import scamRoutes from './routes/scamRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import { initDB } from './db.js';
 
 dotenv.config();
 
@@ -24,6 +25,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'BlockBridge backend running', uptime: process.uptime() });
 });
 
-app.listen(port, () => {
-  console.log(`BlockBridge backend listening on http://localhost:${port}`);
-});
+initDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`BlockBridge backend listening on http://localhost:${port}`);
+    });
+  })
+  .catch(err => {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
+  });
