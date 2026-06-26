@@ -14,8 +14,7 @@
     "express": "^4.18.3",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.2.0",
-    "mysql2": "^3.4.0",
-    "razorpay": "^2.9.2"
+    "mysql2": "^3.4.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

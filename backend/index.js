@@ -10,9 +10,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Webhook needs raw body — register before express.json()
-app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
-
 app.use(cors());
 app.use(express.json());
 
