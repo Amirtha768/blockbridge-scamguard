@@ -33,8 +33,12 @@ async function checkQuota(req, res) {
   const today = getLocalDate();
   const resetDate = toDateStr(user.scans_reset_date);
 
-  // For PRO/BUSINESS users, track scans but no limit
-  if (user.plan !== 'FREE') {
+  // TEMPORARY FIX: Treat all users as FREE until database is properly reset
+  // This ensures scan counting works correctly
+  const treatAsFree = true; // Change to false after running reset script
+
+  if (!treatAsFree && user.plan !== 'FREE') {
+    // PRO/BUSINESS users: track scans but no limit
     if (resetDate !== today) {
       await db.execute(
         'UPDATE users SET scans_today = 1, scans_reset_date = ? WHERE id = ?',
@@ -49,7 +53,7 @@ async function checkQuota(req, res) {
     return true;
   }
 
-  // For FREE users, check limit
+  // For FREE users (or all users when treatAsFree=true), check limit
   if (resetDate !== today) {
     await db.execute(
       'UPDATE users SET scans_today = 1, scans_reset_date = ? WHERE id = ?',
@@ -115,12 +119,17 @@ router.get('/scan/quota', authenticate, async (req, res) => {
       [req.user.id]
     );
     if (!rows.length) return res.status(404).json({ message: 'User not found.' });
+    
     const user      = rows[0];
     const today     = getLocalDate();
     const resetDate = toDateStr(user.scans_reset_date);
     const scansUsed = resetDate === today ? (user.scans_today || 0) : 0;
-    const scansLeft = user.plan === 'FREE' ? Math.max(0, FREE_DAILY_LIMIT - scansUsed) : null;
-    res.json({ plan: user.plan, scansUsed, scansLeft, limit: FREE_DAILY_LIMIT });
+    
+    // TEMPORARY FIX: Always treat as FREE user and calculate scansLeft
+    // Remove this after database is reset properly
+    const scansLeft = Math.max(0, FREE_DAILY_LIMIT - scansUsed);
+    
+    res.json({ plan: 'FREE', scansUsed, scansLeft, limit: FREE_DAILY_LIMIT });
   } catch (err) {
     console.error('quota error:', err);
     res.status(500).json({ message: 'Server error.' });
