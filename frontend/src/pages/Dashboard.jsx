@@ -143,7 +143,15 @@ function ScannerView({ scanner, token, onBack, onScanDone, isPro }) {
 
 function Dashboard() {
   const token = localStorage.getItem('bb_token');
-  const [user, setUser] = useState(getUser());
+  const initialUser = getUser();
+  
+  // TEMPORARY FIX: Force FREE plan on initial load
+  const [user, setUser] = useState(initialUser ? {
+    ...initialUser,
+    plan: 'FREE',
+    subscription_status: 'NONE',
+    expiry_date: null
+  } : null);
 
   const [activeScanner, setActiveScanner] = useState(null);
   const [quota, setQuota]                 = useState(null);
@@ -161,8 +169,18 @@ function Dashboard() {
       });
       if (res.ok) {
         const userData = await res.json();
-        localStorage.setItem('bb_user', JSON.stringify(userData));
-        setUser(userData); // Update state instead of reloading page
+        
+        // TEMPORARY FIX: Force all users to FREE plan until database is reset
+        // Remove this after running: npm run reset-users on Render
+        const fixedUserData = {
+          ...userData,
+          plan: 'FREE',
+          subscription_status: 'NONE',
+          expiry_date: null
+        };
+        
+        localStorage.setItem('bb_user', JSON.stringify(fixedUserData));
+        setUser(fixedUserData); // Update state instead of reloading page
       }
     } catch (err) {
       console.error('Failed to refresh user data:', err);
