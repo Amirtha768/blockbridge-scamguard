@@ -125,30 +125,16 @@ function Contact() {
             <p className="section-label">Contact Info</p>
             <div className="info-item">
               <span className="info-label">Support Email</span>
-              <span className="info-value">support@blockbridge.ai</span>
+              <span className="info-value">blockbridgescamguardai@gmail.com</span>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Phone Number</span>
+              <span className="info-value">+91 6381487329</span>
             </div>
             <div className="info-item">
               <span className="info-label">Response Time</span>
               <span className="info-value">Within 24–48 hours</span>
             </div>
-            <div className="info-item">
-              <span className="info-label">Location</span>
-              <span className="info-value">Online Global Support</span>
-            </div>
-          </div>
-
-          {/* 4. Business / Enterprise */}
-          <div className="section-card business-card">
-            <p className="section-label">Business &amp; Enterprise Solutions</p>
-            <ul className="biz-list">
-              <li>API integration for companies</li>
-              <li>Cybersecurity automation tools</li>
-              <li>Bulk scam protection systems</li>
-              <li>Custom enterprise dashboards</li>
-            </ul>
-            <a href="mailto:enterprise@blockbridge.ai" className="button button-secondary biz-btn">
-              Contact Enterprise Team
-            </a>
           </div>
         </div>
       </section>
