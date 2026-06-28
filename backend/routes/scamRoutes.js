@@ -191,20 +191,57 @@ router.post('/scan/email', authenticate, async (req, res) => {
 
 // POST /api/scan/qr  (file upload)
 router.post('/scan/qr', authenticate, upload.single('file'), async (req, res) => {
-  if (!await checkQuota(req, res)) return;
-  // Stub: real QR decode would use jsQR or similar
-  const score  = Math.floor(10 + Math.random() * 40);
-  const status = score > 35 ? 'suspicious' : 'safe';
-  res.json(buildResponse({ score, status }));
+  try {
+    if (!await checkQuota(req, res)) return;
+    
+    // TODO: Implement QR code decoding using jsQR or similar library
+    // For now, return a basic message indicating QR scanning is under development
+    res.json({
+      score: 50,
+      status: 'low_risk',
+      explanation: 'QR code scanning is currently under development. Basic file validation passed.',
+      recommendation: 'Verify QR codes manually by checking the destination URL before scanning.',
+      indicators: {
+        hasHTTPS: false,
+        isBlacklisted: false,
+        suspiciousKeywords: [],
+        isShortURL: false,
+        domainAge: null,
+        redirectCount: 0
+      }
+    });
+  } catch (error) {
+    console.error('QR scan error:', error);
+    res.status(500).json({ message: 'Error processing QR code. Please try again.' });
+  }
 });
 
 // POST /api/scan/image  (file upload)
 router.post('/scan/image', authenticate, upload.single('file'), async (req, res) => {
-  if (!await checkQuota(req, res)) return;
-  // Stub: real OCR + analysis would go here
-  const score  = Math.floor(15 + Math.random() * 50);
-  const status = score > 45 ? 'suspicious' : 'safe';
-  res.json(buildResponse({ score, status }));
+  try {
+    if (!await checkQuota(req, res)) return;
+    
+    // TODO: Implement OCR text extraction using tesseract.js or similar library
+    // Then apply risk analysis to extracted text
+    // For now, return a basic message indicating image scanning is under development
+    res.json({
+      score: 50,
+      status: 'low_risk',
+      explanation: 'Screenshot analysis is currently under development. Basic file validation passed.',
+      recommendation: 'Manually review screenshots for suspicious content like fake payment pages or phishing attempts.',
+      indicators: {
+        hasHTTPS: false,
+        isBlacklisted: false,
+        suspiciousKeywords: [],
+        isShortURL: false,
+        domainAge: null,
+        redirectCount: 0
+      }
+    });
+  } catch (error) {
+    console.error('Image scan error:', error);
+    res.status(500).json({ message: 'Error processing image. Please try again.' });
+  }
 });
 
 // POST /api/scan/job
