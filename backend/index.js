@@ -17,12 +17,14 @@ const port = process.env.PORT || 5000;
 // Webhook needs raw body — register before express.json()
 app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 
-// Configure CORS to allow your Netlify frontend
+// Configure CORS to allow your frontend domains
 const corsOptions = {
   origin: [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://blockbridge-scamguard.netlify.app'
+    'https://blockbridge-scamguard.netlify.app',
+    'https://blockbridge-scamguard2028.vercel.app',
+    /\.vercel\.app$/  // Allow all Vercel preview deployments
   ],
   credentials: true,
   optionsSuccessStatus: 200
