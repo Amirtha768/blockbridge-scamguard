@@ -48,12 +48,12 @@ function Contact() {
 
   return (
     <>
-      {/* 1. Hero */}
+      {/* Hero */}
       <section className="contact-hero">
         <p className="eyebrow">Support &amp; Contact</p>
         <h1>Contact BlockBridge ScamGuard AI</h1>
         <p className="contact-hero-sub">
-          We are here to help you stay safe from online scams. Reach out for support, scam reports, or business queries.
+          We're here to help you stay safe from online scams. Reach out for support, scam reports, or business queries.
         </p>
       </section>
 
