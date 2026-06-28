@@ -57,17 +57,17 @@ const plans = [
 
 const steps = [
   { n: '1', title: 'Select a plan', desc: 'Choose Free, Pro, or Business based on your needs.' },
-  { n: '2', title: 'Complete secure payment', desc: 'Pay safely via UPI (GPay, PhonePe), card, or net banking through Razorpay.' },
-  { n: '3', title: 'Account activated instantly', desc: 'Your plan is live the moment payment is confirmed.' },
-  { n: '4', title: 'Access unlocked in dashboard', desc: 'All features are immediately available in your account.' },
+  { n: '2', title: 'Submit payment proof', desc: 'Make a UPI payment and upload your payment screenshot with transaction ID.' },
+  { n: '3', title: 'Admin verification', desc: 'Our team verifies your payment and generates your unique activation key.' },
+  { n: '4', title: 'Activate & enjoy', desc: 'Enter your activation key in the dashboard to unlock all features instantly.' },
 ];
 
 const faqs = [
   { q: 'What\'s the difference between Pro and Business?', a: 'Pro (₹199/mo) includes 5 scanners and unlimited scans - perfect for individuals. Business (₹499/mo) adds Job & Investment fraud detectors, Team dashboard, API access, and Priority support - ideal for teams and companies.' },
-  { q: 'Can I cancel anytime?', a: 'Yes. Cancel anytime from your dashboard. No questions asked.' },
-  { q: 'Will I get a refund?', a: 'Refunds are available within 7 days of payment if paid features haven\'t been used.' },
-  { q: 'Is payment secure?', a: 'All payments are processed via Razorpay with 256-bit SSL encryption. We never store your card details.' },
-  { q: 'What happens after payment?', a: 'Your account is upgraded instantly. All plan features become available in your dashboard.' },
+  { q: 'How long does activation take?', a: 'Once you submit your payment proof, our admin team verifies it within 24 hours and generates your activation key. You\'ll receive the key and can activate your subscription immediately.' },
+  { q: 'Can I cancel anytime?', a: 'Yes. Subscriptions are valid for the purchased period (30 days for Pro, 180 days for Business). No auto-renewal - you can choose to renew or not.' },
+  { q: 'Is payment secure?', a: 'Yes. All payments are made via UPI which is secure and encrypted. We only require you to upload a screenshot for verification purposes.' },
+  { q: 'What if my payment is not verified?', a: 'If there\'s an issue with your payment proof, our admin team will reject it with a reason. You can resubmit with the correct information.' },
 ];
 
 const comparison = [
@@ -110,9 +110,16 @@ function Pricing() {
         return;
       }
 
-      // PRO and BUSINESS plans temporarily disabled - will be enabled after Razorpay KYC
-      alert('Premium plans coming soon! 🚀\n\nCurrently accepting FREE plan registrations only.\nPayment gateway will be activated after KYC completion.\n\nFor early access, contact support@blockbridge.ai');
-      return;
+      // For Pro and Business plans - redirect to payment upload
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Redirect to login first
+        window.location.hash = '#/login';
+        return;
+      }
+
+      // Redirect to payment upload page
+      window.location.hash = '#/payment-upload';
     }
 
 
@@ -172,10 +179,9 @@ function Pricing() {
         <div className="section-intro">
           <p className="section-label">How it works</p>
           <h2>How Subscription Works</h2>
-          <p>No keys required. Everything is automatic.</p>
+          <p>Simple payment submission & activation process.</p>
         </div>
-        <div className="process-grid">
-          {steps.map(s => (
+        <div className="process-grid">{steps.map(s => (
             <article className="process-card" key={s.n}>
               <div className="step-number">{s.n}</div>
               <h3>{s.title}</h3>
@@ -183,18 +189,28 @@ function Pricing() {
             </article>
           ))}
         </div>
+
+        {/* Payment Instructions */}
+        <div className="payment-info-box">
+          <h3>Payment Information</h3>
+          <div className="payment-details">
+            <p><strong>UPI ID:</strong> blockbridge@upi</p>
+            <p><strong>Phone Number:</strong> +91 9876543210</p>
+            <p className="payment-note">After making payment, click "Upgrade to Pro" or "Go Business" to submit your proof</p>
+          </div>
+        </div>
       </section>
 
       {/* 4. Trust */}
       <section className="section">
         <div className="trust-grid">
           <article className="trust-card">
-            <h3>Secure Payments</h3>
-            <p>Powered by Razorpay with 256-bit SSL encryption on every transaction.</p>
+            <h3>Secure Process</h3>
+            <p>Verified payment submission process with secure screenshot upload and admin verification.</p>
           </article>
           <article className="trust-card">
-            <h3>Instant Activation</h3>
-            <p>Your plan goes live the moment payment is confirmed — no waiting, no manual steps.</p>
+            <h3>Quick Activation</h3>
+            <p>Receive your activation key within 24 hours of payment verification and activate instantly.</p>
           </article>
           <article className="trust-card">
             <h3>1,00,000+ Users</h3>

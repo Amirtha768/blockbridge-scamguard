@@ -7,11 +7,19 @@ import Pricing from './pages/Pricing';
 import Auth from './pages/Auth';
 import Product from './pages/Product';
 import Dashboard from './pages/Dashboard';
+import PaymentUpload from './pages/PaymentUpload';
+import MyPayments from './pages/MyPayments';
+import ActivateSubscription from './pages/ActivateSubscription';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function getRoute() {
   const hash = window.location.hash || '#/';
   const route = hash.replace(/^#/, '');
-  const valid = ['/', '/about', '/contact', '/pricing', '/login', '/product', '/dashboard'];
+  const valid = [
+    '/', '/about', '/contact', '/pricing', '/login', '/product', '/dashboard',
+    '/payment-upload', '/my-payments', '/activate', '/admin/login', '/admin/dashboard'
+  ];
   return valid.includes(route) ? route : '/';
 }
 
@@ -29,6 +37,15 @@ function App() {
 
   // Dashboard — has its own shell
   if (route === '/dashboard') return <Dashboard />;
+
+  // Payment pages — full screen
+  if (route === '/payment-upload') return <PaymentUpload />;
+  if (route === '/my-payments') return <MyPayments />;
+  if (route === '/activate') return <ActivateSubscription />;
+
+  // Admin pages — full screen
+  if (route === '/admin/login') return <AdminLogin />;
+  if (route === '/admin/dashboard') return <AdminDashboard />;
 
   return (
     <div className="page-shell">

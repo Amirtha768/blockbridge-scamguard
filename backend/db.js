@@ -23,6 +23,8 @@ export async function initDB() {
       plan ENUM('FREE','PRO','BUSINESS') DEFAULT 'FREE',
       subscription_status ENUM('ACTIVE','EXPIRED','NONE') DEFAULT 'NONE',
       expiry_date DATETIME DEFAULT NULL,
+      activation_date DATETIME DEFAULT NULL,
+      last_activation_key VARCHAR(20) DEFAULT NULL,
       scans_today INT DEFAULT 0,
       scans_reset_date DATE DEFAULT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -40,6 +42,49 @@ export async function initDB() {
       status ENUM('PENDING','SUCCESS','FAILED') DEFAULT 'PENDING',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS payment_requests (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      plan ENUM('PRO', 'BUSINESS') NOT NULL,
+      amount DECIMAL(10, 2) NOT NULL,
+      screenshot_url VARCHAR(500) DEFAULT NULL,
+      transaction_id VARCHAR(100) NOT NULL,
+      status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+      admin_notes TEXT DEFAULT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      verified_at DATETIME DEFAULT NULL,
+      verified_by INT DEFAULT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `);
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS activation_keys (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      activation_key VARCHAR(20) NOT NULL UNIQUE,
+      user_id INT NOT NULL,
+      plan ENUM('PRO', 'BUSINESS') NOT NULL,
+      payment_request_id INT DEFAULT NULL,
+      status ENUM('UNUSED', 'USED', 'EXPIRED', 'REVOKED') DEFAULT 'UNUSED',
+      generated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      activated_at DATETIME DEFAULT NULL,
+      expiry_date DATETIME DEFAULT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (payment_request_id) REFERENCES payment_requests(id) ON DELETE SET NULL
+    )
+  `);
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS admin_users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL UNIQUE,
+      role ENUM('ADMIN', 'SUPER_ADMIN') DEFAULT 'ADMIN',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `);
 

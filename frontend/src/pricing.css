@@ -269,3 +269,45 @@
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* Payment Info Box */
+.payment-info-box {
+  max-width: 600px;
+  margin: 3rem auto 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+}
+
+.payment-info-box h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+}
+
+.payment-details {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.payment-details p {
+  margin: 0.75rem 0;
+  font-size: 1.1rem;
+}
+
+.payment-details strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.payment-note {
+  margin-top: 1.5rem !important;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-style: italic;
+  font-size: 0.95rem !important;
+}

@@ -361,6 +361,19 @@ function Dashboard() {
               )}
             </div>
 
+            {/* Subscription Management Links */}
+            <div className="dash-card">
+              <p className="section-label">Subscription</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <a href="#/activate" className="button button-secondary" style={{ width: '100%', justifyContent: 'center', fontSize: '14px' }}>
+                  🔑 Activate Key
+                </a>
+                <a href="#/my-payments" className="button button-secondary" style={{ width: '100%', justifyContent: 'center', fontSize: '14px' }}>
+                  💳 My Payments
+                </a>
+              </div>
+            </div>
+
             <div className="dash-card">
               <p className="section-label">AI Insights</p>
               <div className="insights-list">

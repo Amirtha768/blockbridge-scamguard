@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import scamRoutes from './routes/scamRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import paymentRequestRoutes from './routes/paymentRequestRoutes.js';
+import activationRoutes from './routes/activationRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import { initDB } from './db.js';
 
 dotenv.config();
@@ -30,6 +33,9 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/payment-requests', paymentRequestRoutes);
+app.use('/api/activation', activationRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api', scamRoutes);
 
 app.get('/api/health', (req, res) => {
