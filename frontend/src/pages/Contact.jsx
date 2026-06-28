@@ -51,7 +51,7 @@ function Contact() {
       {/* Hero */}
       <section className="contact-hero">
         <p className="eyebrow">Support &amp; Contact</p>
-        <h1>Contact BlockBridge ScamGuard AI</h1>
+        <h1>Contact BlockBridge ScamGuard AI - NEW VERSION</h1>
         <p className="contact-hero-sub">
           We're here to help you stay safe from online scams. Reach out for support, scam reports, or business queries.
         </p>
