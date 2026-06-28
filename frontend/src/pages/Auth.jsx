@@ -47,12 +47,18 @@ function Auth() {
         ? { email: form.email, password: form.password }
         : { name: form.name, email: form.email, password: form.password };
 
+      // Add timeout to handle slow Render backend cold starts
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
       const res = await fetch(`${API}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       const data = await res.json();
 
       if (!res.ok) {
@@ -64,8 +70,12 @@ function Auth() {
         }
         window.location.hash = '#/dashboard';
       }
-    } catch {
-      setServerError('Unable to connect to server. Please try again later.');
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        setServerError('Server is taking too long to respond. The backend may be waking up from sleep. Please try again.');
+      } else {
+        setServerError('Unable to connect to server. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
@@ -180,7 +190,10 @@ function Auth() {
 
           <button type="submit" className="button button-primary auth-submit" disabled={loading}>
             {loading
-              ? <span className="spinner" />
+              ? <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="spinner" />
+                  <span>Connecting... (first load may take 30s)</span>
+                </span>
               : isLogin ? 'Login to Dashboard' : 'Create Account'
             }
           </button>
