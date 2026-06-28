@@ -128,7 +128,12 @@ function Product() {
             ? <a href="#/dashboard" className="button button-primary">Go to Dashboard</a>
             : <a href="#/login" className="button button-primary">Start Free Scan</a>
           }
-          <a href="#scanners" className="button button-secondary">View Scanners</a>
+          <button 
+            onClick={() => document.getElementById('scanners')?.scrollIntoView({ behavior: 'smooth' })} 
+            className="button button-secondary"
+          >
+            View Scanners
+          </button>
         </div>
         {!token && (
           <p className="login-notice">Please <a href="#/login">login</a> to use the scanners.</p>
