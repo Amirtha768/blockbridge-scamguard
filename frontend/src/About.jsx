@@ -165,8 +165,8 @@ function About() {
             </p>
           </div>
           <div className="cta-actions">
-            <a href="#/" className="button button-primary">Start Free Scan</a>
-            <a href="#/" className="button button-secondary">Go to Dashboard</a>
+            <a href="/#/pricing" className="button button-primary">View Pricing</a>
+            <a href="/#/dashboard" className="button button-secondary">Go to Dashboard</a>
           </div>
         </section>
       </main>

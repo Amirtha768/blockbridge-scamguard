@@ -61,8 +61,8 @@ function Home() {
           <h1>Detect Scams Before They Detect You</h1>
           <p className="hero-text">AI-powered scam detection for safer internet browsing.</p>
           <div className="hero-actions">
-            <a href="#cta" className="button button-primary">Start Free Scan</a>
-            <a href="#pricing" className="button button-secondary">View Pricing</a>
+            <a href="#pricing" className="button button-primary">View Pricing</a>
+            <a href="#features" className="button button-secondary">Explore Features</a>
           </div>
           <div className="hero-trust">
             <span>Trusted to block 1,00,000+ scam attempts</span>
