@@ -100,7 +100,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Ensure proper error handling for validation failures
     - _Requirements: 1.1, 1.2, 1.13_
   
-  - [ ] 4.2 Update QR and image scanner endpoints
+  - [x] 4.2 Update QR and image scanner endpoints
     - Implement proper file processing (currently stubs)
     - Add OCR text extraction for image analysis
     - Apply risk analysis to extracted content
@@ -112,8 +112,8 @@ The plan follows an incremental approach where each task builds upon previous wo
   - Test with example URLs and messages from requirements
   - Ask the user if questions arise
 
-- [ ] 6. Scan History System - Backend
-  - [ ] 6.1 Implement ScanHistoryManager module
+- [x] 6. Scan History System - Backend
+  - [x] 6.1 Implement ScanHistoryManager module
     - Create utils/scanHistoryManager.js
     - Implement saveScan() function
     - Implement getRecentScans() function
@@ -133,7 +133,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - **Property 7: History Filtering and Search Correctness**
     - **Validates: Requirements 3.7, 3.8**
   
-  - [ ] 6.5 Create scan history API routes
+  - [x] 6.5 Create scan history API routes
     - Create routes/scanHistoryRoutes.js
     - Implement GET /api/scan-history with filtering
     - Implement GET /api/scan-history/recent
@@ -141,7 +141,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Add authentication middleware
     - _Requirements: 3.2, 3.3, 3.7, 3.8_
   
-  - [ ] 6.6 Update scanner routes to save scan history
+  - [x] 6.6 Update scanner routes to save scan history
     - Modify all scanner endpoints to call saveScan() after analysis
     - Store input, result, risk score, and risk details
     - Handle errors gracefully

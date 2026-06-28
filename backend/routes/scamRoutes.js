@@ -4,6 +4,7 @@ import { authenticate } from '../middleware/auth.js';
 import db from '../db.js';
 import { validateInput } from '../utils/inputValidator.js';
 import { calculateRisk } from '../utils/riskCalculator.js';
+import { saveScan } from '../utils/scanHistoryManager.js';
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
@@ -136,6 +137,22 @@ router.post('/scan/url', authenticate, async (req, res) => {
     
     // Use smart risk analysis
     const riskResult = await calculateRisk(url, 'URL');
+    
+    // Save to scan history
+    try {
+      await saveScan({
+        userId: req.user.id,
+        scanType: 'URL',
+        input: url,
+        result: riskResult.status,
+        riskScore: riskResult.score,
+        riskDetails: riskResult.indicators
+      });
+    } catch (historyError) {
+      console.error('Failed to save scan history:', historyError);
+      // Don't fail the request if history save fails
+    }
+    
     res.json(buildResponse(riskResult));
   } catch (error) {
     console.error('URL scan error:', error);
@@ -159,6 +176,21 @@ router.post('/scan/whatsapp', authenticate, async (req, res) => {
     
     // Use smart risk analysis
     const riskResult = await calculateRisk(message, 'MESSAGE');
+    
+    // Save to scan history
+    try {
+      await saveScan({
+        userId: req.user.id,
+        scanType: 'WHATSAPP',
+        input: message,
+        result: riskResult.status,
+        riskScore: riskResult.score,
+        riskDetails: riskResult.indicators
+      });
+    } catch (historyError) {
+      console.error('Failed to save scan history:', historyError);
+    }
+    
     res.json(buildResponse(riskResult));
   } catch (error) {
     console.error('WhatsApp scan error:', error);
@@ -182,6 +214,21 @@ router.post('/scan/email', authenticate, async (req, res) => {
     
     // Use smart risk analysis
     const riskResult = await calculateRisk(content, 'EMAIL');
+    
+    // Save to scan history
+    try {
+      await saveScan({
+        userId: req.user.id,
+        scanType: 'EMAIL',
+        input: content,
+        result: riskResult.status,
+        riskScore: riskResult.score,
+        riskDetails: riskResult.indicators
+      });
+    } catch (historyError) {
+      console.error('Failed to save scan history:', historyError);
+    }
+    
     res.json(buildResponse(riskResult));
   } catch (error) {
     console.error('Email scan error:', error);
@@ -260,6 +307,21 @@ router.post('/scan/job', authenticate, async (req, res) => {
     
     // Use smart risk analysis
     const riskResult = await calculateRisk(content, 'MESSAGE');
+    
+    // Save to scan history
+    try {
+      await saveScan({
+        userId: req.user.id,
+        scanType: 'JOB',
+        input: content,
+        result: riskResult.status,
+        riskScore: riskResult.score,
+        riskDetails: riskResult.indicators
+      });
+    } catch (historyError) {
+      console.error('Failed to save scan history:', historyError);
+    }
+    
     res.json(buildResponse(riskResult));
   } catch (error) {
     console.error('Job scan error:', error);
@@ -283,6 +345,21 @@ router.post('/scan/invest', authenticate, async (req, res) => {
     
     // Use smart risk analysis
     const riskResult = await calculateRisk(content, 'MESSAGE');
+    
+    // Save to scan history
+    try {
+      await saveScan({
+        userId: req.user.id,
+        scanType: 'INVESTMENT',
+        input: content,
+        result: riskResult.status,
+        riskScore: riskResult.score,
+        riskDetails: riskResult.indicators
+      });
+    } catch (historyError) {
+      console.error('Failed to save scan history:', historyError);
+    }
+    
     res.json(buildResponse(riskResult));
   } catch (error) {
     console.error('Investment scan error:', error);
