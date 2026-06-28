@@ -88,6 +88,50 @@ export async function initDB() {
     )
   `);
 
+  // NEW: Scan history table
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS scan_history (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      scan_type ENUM('URL', 'EMAIL', 'WHATSAPP', 'QR', 'SCREENSHOT', 'JOB', 'INVESTMENT') NOT NULL,
+      input TEXT NOT NULL,
+      result VARCHAR(50) NOT NULL,
+      risk_score INT NOT NULL,
+      risk_details JSON DEFAULT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      INDEX idx_user_created (user_id, created_at),
+      INDEX idx_scan_type (scan_type),
+      INDEX idx_created_at (created_at)
+    )
+  `);
+
+  // NEW: Blacklist domains table
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS blacklist_domains (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      domain VARCHAR(255) NOT NULL UNIQUE,
+      pattern VARCHAR(255) DEFAULT NULL,
+      category ENUM('PHISHING', 'MALWARE', 'SCAM', 'SPAM') NOT NULL,
+      added_by INT DEFAULT NULL,
+      added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      notes TEXT DEFAULT NULL,
+      FOREIGN KEY (added_by) REFERENCES admin_users(id) ON DELETE SET NULL,
+      INDEX idx_domain (domain),
+      INDEX idx_category (category)
+    )
+  `);
+
+  // Seed initial blacklist data
+  await db.execute(`
+    INSERT IGNORE INTO blacklist_domains (domain, category, notes) VALUES
+    ('paytm-login.xyz', 'PHISHING', 'Fake Paytm login page'),
+    ('paytm-secure-login.xyz', 'PHISHING', 'Fake Paytm login page'),
+    ('google-login-free.xyz', 'PHISHING', 'Fake Google login page'),
+    ('free-money-win.com', 'SCAM', 'Money scam site'),
+    ('prize-winner.com', 'SCAM', 'Prize scam site')
+  `);
+
   console.log('Database tables ready.');
 }
 

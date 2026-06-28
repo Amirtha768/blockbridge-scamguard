@@ -8,7 +8,7 @@ The plan follows an incremental approach where each task builds upon previous wo
 
 ## Tasks
 
-- [ ] 1. Database Schema Updates and Razorpay Removal
+- [x] 1. Database Schema Updates and Razorpay Removal
   - Create migration script for new tables (scan_history, blacklist_domains)
   - Remove Razorpay-related database columns and cleanup old payment table
   - Add indexes for performance optimization
@@ -22,8 +22,8 @@ The plan follows an incremental approach where each task builds upon previous wo
   - Test foreign key relationships
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 2. Smart Risk Analysis Engine - Core Components
-  - [ ] 2.1 Implement InputValidator module
+- [x] 2. Smart Risk Analysis Engine - Core Components
+  - [x] 2.1 Implement InputValidator module
     - Create utils/inputValidator.js with URL, email, and message detection
     - Implement pattern matching for each input type
     - Export validation functions
@@ -33,26 +33,26 @@ The plan follows an incremental approach where each task builds upon previous wo
     - **Property 2: Input Type Detection Accuracy**
     - **Validates: Requirements 2.1, 2.2, 2.3, 2.4, 2.5**
   
-  - [ ] 2.3 Implement BlacklistManager module
+  - [x] 2.3 Implement BlacklistManager module
     - Create utils/blacklistManager.js with domain checking
     - Implement database query for blacklist lookup
     - Add caching for performance
     - _Requirements: 1.4_
   
-  - [ ] 2.4 Implement DomainAnalyzer module
+  - [x] 2.4 Implement DomainAnalyzer module
     - Create utils/domainAnalyzer.js for domain age checking
     - Integrate WHOIS lookup with timeout handling
     - Implement fallback for unavailable data
     - _Requirements: 11.1, 11.2, 11.3_
   
-  - [ ] 2.5 Implement RedirectAnalyzer module
+  - [x] 2.5 Implement RedirectAnalyzer module
     - Create utils/redirectAnalyzer.js for redirect detection
     - Use HTTP HEAD requests to follow redirect chains
     - Implement timeout and max depth limits
     - _Requirements: 11.3, 11.4, 11.5_
 
-- [ ] 3. Smart Risk Analysis Engine - Risk Calculator
-  - [ ] 3.1 Implement RiskCalculator module
+- [x] 3. Smart Risk Analysis Engine - Risk Calculator
+  - [x] 3.1 Implement RiskCalculator module
     - Create utils/riskCalculator.js with scoring algorithm
     - Implement HTTPS bonus (-10 points)
     - Implement blacklist check (+40 points)
@@ -90,7 +90,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8, 14.9, 14.10, 14.11, 14.12_
 
 - [ ] 4. Update Scanner Routes with Smart Risk Analysis
-  - [ ] 4.1 Replace random scoring in scamRoutes.js
+  - [x] 4.1 Replace random scoring in scamRoutes.js
     - Import InputValidator and RiskCalculator
     - Update /api/scan/url endpoint to use real risk analysis
     - Update /api/scan/whatsapp endpoint with keyword detection
