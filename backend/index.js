@@ -17,25 +17,9 @@ const port = process.env.PORT || 5000;
 // Webhook needs raw body — register before express.json()
 app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 
-// Configure CORS to allow your frontend domains
+// Configure CORS - Allow all origins for now (simplify debugging)
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, or same-origin)
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://blockbridge-scamguard.netlify.app'
-    ];
-    
-    // Allow all Vercel domains
-    if (origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true, // Allow all origins
   credentials: true,
   optionsSuccessStatus: 200
 };
