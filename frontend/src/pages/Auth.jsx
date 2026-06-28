@@ -49,7 +49,7 @@ function Auth() {
 
       // Add timeout to handle slow Render backend cold starts
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout (increased)
 
       const res = await fetch(`${API}${endpoint}`, {
         method: 'POST',
