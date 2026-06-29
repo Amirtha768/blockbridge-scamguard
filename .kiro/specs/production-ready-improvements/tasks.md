@@ -251,14 +251,14 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Display columns: Name, Email, Plan, Expiry Date
     - _Requirements: 9.12_
 
-- [-] 11. Activation Key System - User Side
-  - [-] 11.1 Create activation UI in user dashboard
+- [x] 11. Activation Key System - User Side
+  - [x] 11.1 Create activation UI in user dashboard
     - Add "Subscription" → "Activate Plan" button to dashboard
     - Create activation form with key input field
     - Display activation success/error messages
     - _Requirements: 12.1_
   
-  - [-] 11.2 Verify activation backend logic
+  - [x] 11.2 Verify activation backend logic
     - Check POST /api/activation/activate endpoint validates key format
     - Ensure key existence check works
     - Verify key belongs to user
@@ -278,13 +278,13 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Test key not found error
     - _Requirements: 12.3, 12.4, 12.5, 12.6_
 
-- [ ] 12. Checkpoint - Test Payment and Activation Flow
+- [x] 12. Checkpoint - Test Payment and Activation Flow
   - Test complete workflow: Submit payment → Admin approve → Receive key → Activate → Verify plan upgraded
   - Test rejection workflow
   - Verify activation key uniqueness
   - Ask the user if questions arise
 
-- [ ] 13. Enhanced Dashboard - Frontend
+- [-] 13. Enhanced Dashboard - Frontend
   - [ ] 13.1 Create Recent Scan History component
     - Display last 5-10 scans on dashboard
     - Show columns: Date & Time, Scan Type, Result, Risk Score

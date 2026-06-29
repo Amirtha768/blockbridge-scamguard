@@ -38,6 +38,120 @@ function ScoreBar({ score }) {
   );
 }
 
+function RecentScanHistory({ scans }) {
+  const getRiskStatusColor = (score) => {
+    if (score < 26) return { bg: '#e8f8f3', color: '#42d8b1', label: 'SAFE' };
+    if (score < 51) return { bg: '#fff8e8', color: '#f0b429', label: 'LOW RISK' };
+    if (score < 76) return { bg: '#fff3e8', color: '#ff9a3d', label: 'SUSPICIOUS' };
+    return { bg: '#ffe8e8', color: '#ff6a6a', label: 'DANGEROUS' };
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+    
+    if (hours < 1) return 'Just now';
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+  };
+
+  const getScannerIcon = (type) => {
+    const icons = {
+      URL: '🔍',
+      EMAIL: '📧',
+      WHATSAPP: '💬',
+      QR: '📷',
+      SCREENSHOT: '🖼',
+      JOB: '💼',
+      INVESTMENT: '💰'
+    };
+    return icons[type] || '🔍';
+  };
+
+  if (!scans || scans.length === 0) {
+    return (
+      <div className="dash-card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <p className="section-label">Recent Scan History</p>
+        </div>
+        <div style={{ textAlign: 'center', padding: '40px 20px', color: '#999' }}>
+          <p>No scans yet. Start scanning to see your history here.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dash-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <p className="section-label">Recent Scan History</p>
+        <a href="#/scan-history" style={{ fontSize: '13px', color: '#6366f1', textDecoration: 'none', fontWeight: '500' }}>
+          View All →
+        </a>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {scans.slice(0, 8).map((scan) => {
+          const status = getRiskStatusColor(scan.risk_score);
+          return (
+            <div key={scan.id} style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              padding: '12px',
+              background: '#f9fafb',
+              borderRadius: '8px',
+              fontSize: '13px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
+                <span style={{ fontSize: '20px' }}>{getScannerIcon(scan.scan_type)}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '2px' }}>
+                    {scan.scan_type}
+                  </div>
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: '#6b7280',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {formatDate(scan.created_at)}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ 
+                  padding: '4px 10px', 
+                  borderRadius: '6px', 
+                  background: status.bg,
+                  color: status.color,
+                  fontWeight: '600',
+                  fontSize: '11px',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {status.label}
+                </div>
+                <div style={{ 
+                  fontWeight: '700', 
+                  color: status.color,
+                  minWidth: '40px',
+                  textAlign: 'right'
+                }}>
+                  {scan.risk_score}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function UpgradeWall() {
   return (
     <div className="upgrade-wall">
@@ -155,11 +269,13 @@ function Dashboard() {
 
   const [activeScanner, setActiveScanner] = useState(null);
   const [quota, setQuota]                 = useState(null);
+  const [recentScans, setRecentScans]     = useState([]);
 
   useEffect(() => {
     if (!token || !user) { window.location.hash = '#/login'; return; }
     refreshUserData();
     refreshQuota();
+    fetchRecentScans();
   }, []);
 
   async function refreshUserData() {
@@ -184,6 +300,20 @@ function Dashboard() {
       }
     } catch (err) {
       console.error('Failed to refresh user data:', err);
+    }
+  }
+
+  async function fetchRecentScans() {
+    try {
+      const res = await fetch(`${API}/api/scan-history/recent`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setRecentScans(data.scans || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch recent scans:', err);
     }
   }
 
@@ -242,8 +372,9 @@ function Dashboard() {
               setTimeout(() => refreshQuota(), 100);
             }}
             onScanDone={() => {
-              // Refresh quota after each scan
+              // Refresh quota and recent scans after each scan
               refreshQuota();
+              fetchRecentScans();
             }}
           />
         </div>
@@ -307,6 +438,9 @@ function Dashboard() {
                 })}
               </div>
             </div>
+
+            {/* Recent Scan History */}
+            <RecentScanHistory scans={recentScans} />
 
           </div>
 
