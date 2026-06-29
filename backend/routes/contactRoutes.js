@@ -3,12 +3,17 @@ import nodemailer from 'nodemailer';
 
 const router = express.Router();
 
-// Configure email transporter (using Gmail)
+// Configure email transporter with better settings for Render
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587, // Use port 587 instead of 465
+  secure: false, // Use STARTTLS instead of SSL
   auth: {
     user: process.env.EMAIL_USER || 'blockbridgescamguardai@gmail.com',
-    pass: process.env.EMAIL_PASSWORD // You'll need to set this in .env
+    pass: process.env.EMAIL_PASSWORD
+  },
+  tls: {
+    rejectUnauthorized: false // Allow self-signed certificates
   }
 });
 
