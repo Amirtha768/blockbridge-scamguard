@@ -89,7 +89,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Test suspicious messages return correct risk levels
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8, 14.9, 14.10, 14.11, 14.12_
 
-- [ ] 4. Update Scanner Routes with Smart Risk Analysis
+- [x] 4. Update Scanner Routes with Smart Risk Analysis
   - [x] 4.1 Replace random scoring in scamRoutes.js
     - Import InputValidator and RiskCalculator
     - Update /api/scan/url endpoint to use real risk analysis
@@ -106,7 +106,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Apply risk analysis to extracted content
     - _Requirements: 5.6, 5.7_
 
-- [ ] 5. Checkpoint - Test Smart Risk Analysis
+- [x] 5. Checkpoint - Test Smart Risk Analysis
   - Ensure all scanner endpoints use real risk analysis
   - Verify deterministic scoring works correctly
   - Test with example URLs and messages from requirements
@@ -147,7 +147,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Handle errors gracefully
     - _Requirements: 3.1_
 
-- [ ] 7. PDF Report Generation
+- [-] 7. PDF Report Generation
   - [ ] 7.1 Implement PDFReportGenerator module
     - Install pdfkit dependency
     - Create utils/pdfReportGenerator.js
@@ -310,22 +310,22 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Display subscription expiry date for PRO/BUSINESS users
     - _Requirements: 4.3_
 
-- [ ] 14. Scan History Page - Frontend
-  - [-] 14.1 Create full scan history page
+- [x] 14. Scan History Page - Frontend
+  - [x] 14.1 Create full scan history page
     - Build table component with columns: Date, Scanner, Result, Risk Score
     - Implement pagination for large datasets
     - Add "Download PDF Report" buttons for individual scans
     - Restrict based on plan (FREE: disabled, PRO/BUSINESS: enabled)
     - _Requirements: 3.2, 3.3, 3.9, 3.10, 3.11_
   
-  - [ ] 14.2 Implement filter and search functionality
+  - [x] 14.2 Implement filter and search functionality
     - Add filter dropdown for scan type (All, URL, Email, WhatsApp, QR, Screenshot, Job, Investment)
     - Add search input for finding specific scans by content
     - Add date range picker for time-based filtering
     - Restrict search/filter for FREE users, enable for PRO/BUSINESS
     - _Requirements: 3.7, 3.8, 8.6_
   
-  - [ ] 14.3 Implement CSV export for BUSINESS plan
+  - [x] 14.3 Implement CSV export for BUSINESS plan
     - Add "Export CSV" button on history page
     - Only visible/enabled for BUSINESS plan users
     - Generate CSV with all scan data
@@ -437,7 +437,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Add helpful tooltips for complex features
     - _Requirements: 16.6, 16.7_
 
-- [ ] 19. Environment Configuration and Deployment Preparation
+- [-] 19. Environment Configuration and Deployment Preparation
   - [ ] 19.1 Update environment variable configuration
     - Update backend/.env.example with all required variables (remove Razorpay vars)
     - Update frontend/.env.example with correct UPI ID, contact email, phone
