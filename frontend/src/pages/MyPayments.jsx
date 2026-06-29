@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../my-payments.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+const API_URL = import.meta.env.VITE_API_URL || 'https://blockbridge-scamguard.onrender.com';
 
 export default function MyPayments() {
   const navigate = (path) => {

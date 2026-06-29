@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../scan-history.css';
 
-const API_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = import.meta.env.VITE_API_URL || 'https://blockbridge-scamguard.onrender.com';
 
 export default function ScanHistory() {
   const [scans, setScans] = useState([]);

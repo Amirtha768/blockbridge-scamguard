@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../../admin-login.css';
 
-const API_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = import.meta.env.VITE_API_URL || 'https://blockbridge-scamguard.onrender.com';
 
 export default function AdminLogin() {
   const [formData, setFormData] = useState({ email: '', password: '' });
