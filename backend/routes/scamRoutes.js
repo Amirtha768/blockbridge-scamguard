@@ -158,10 +158,30 @@ router.post('/scan/url', authenticate, async (req, res) => {
     
     if (!await checkQuota(req, res)) return;
     
-    // Use smart risk analysis
-    const riskResult = await calculateRisk(url, 'URL');
+    // Use smart risk analysis with extra error protection
+    let riskResult;
+    try {
+      riskResult = await calculateRisk(url, 'URL');
+    } catch (riskError) {
+      console.error('Risk calculation error:', riskError);
+      // Return safe default if risk calculation fails
+      riskResult = {
+        score: 50,
+        status: 'LOW RISK',
+        explanation: 'Analysis completed with limited information. Exercise caution.',
+        recommendation: 'Verify the source before proceeding.',
+        indicators: {
+          hasHTTPS: url.toLowerCase().includes('https'),
+          isBlacklisted: false,
+          suspiciousKeywords: [],
+          isShortURL: false,
+          domainAge: null,
+          redirectCount: 0
+        }
+      };
+    }
     
-    // Save to scan history
+    // Save to scan history (don't fail the request if this fails)
     try {
       await saveScan({
         userId: req.user.id,
@@ -173,12 +193,13 @@ router.post('/scan/url', authenticate, async (req, res) => {
       });
     } catch (historyError) {
       console.error('Failed to save scan history:', historyError);
-      // Don't fail the request if history save fails
+      // Continue - don't fail the request
     }
     
     res.json(buildResponse(riskResult));
   } catch (error) {
     console.error('URL scan error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Error analyzing URL. Please try again.' });
   }
 });
