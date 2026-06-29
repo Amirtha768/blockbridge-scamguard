@@ -19,7 +19,7 @@ export default function PaymentUpload() {
 
   const planDetails = {
     PRO: { name: 'Pro Plan', price: '₹199', duration: '30 days' },
-    BUSINESS: { name: 'Business Plan', price: '₹499', duration: '180 days' }
+    BUSINESS: { name: 'Business Plan', price: '₹499', duration: '90 days' }
   };
 
   const handleFileChange = (e) => {
@@ -127,8 +127,9 @@ export default function PaymentUpload() {
         <div className="payment-instructions">
           <h3>Payment Instructions</h3>
           <div className="instruction-box">
-            <p><strong>UPI ID:</strong> blockbridge@upi</p>
-            <p><strong>Phone Number:</strong> +91 9876543210</p>
+            <p><strong>UPI ID:</strong> 6381487329@ybl</p>
+            <p><strong>Phone Number:</strong> +91 6381487329</p>
+            <p><strong>Email:</strong> blockbridgescamguardai@gmail.com</p>
             <p className="note">Please make the payment and upload the screenshot below</p>
           </div>
         </div>
