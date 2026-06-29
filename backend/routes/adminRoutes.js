@@ -558,3 +558,95 @@ router.get('/screenshots/:filename', authenticateAdmin, (req, res) => {
 });
 
 export default router;
+
+
+// GET /api/admin/contact-messages - Get all contact messages
+router.get('/contact-messages', authenticateAdmin, async (req, res) => {
+  try {
+    const { status } = req.query;
+    
+    let query = 'SELECT * FROM contact_messages';
+    const params = [];
+    
+    if (status) {
+      query += ' WHERE status = ?';
+      params.push(status);
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    const [messages] = await db.execute(query, params);
+    
+    res.json({
+      success: true,
+      messages
+    });
+  } catch (error) {
+    console.error('Get contact messages error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch contact messages'
+    });
+  }
+});
+
+// PATCH /api/admin/contact-messages/:id/status - Update message status
+router.patch('/contact-messages/:id/status', authenticateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    if (!['pending', 'replied', 'archived'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be: pending, replied, or archived'
+      });
+    }
+    
+    await db.execute(
+      'UPDATE contact_messages SET status = ? WHERE id = ?',
+      [status, id]
+    );
+    
+    res.json({
+      success: true,
+      message: 'Message status updated'
+    });
+  } catch (error) {
+    console.error('Update message status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update message status'
+    });
+  }
+});
+
+// GET /api/admin/scam-reports - Get all scam reports
+router.get('/scam-reports', authenticateAdmin, async (req, res) => {
+  try {
+    const { status } = req.query;
+    
+    let query = 'SELECT * FROM scam_reports';
+    const params = [];
+    
+    if (status) {
+      query += ' WHERE status = ?';
+      params.push(status);
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    const [reports] = await db.execute(query, params);
+    
+    res.json({
+      success: true,
+      reports
+    });
+  } catch (error) {
+    console.error('Get scam reports error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch scam reports'
+    });
+  }
+});

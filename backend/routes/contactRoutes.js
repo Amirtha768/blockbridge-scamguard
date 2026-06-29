@@ -1,23 +1,9 @@
 import express from 'express';
-import nodemailer from 'nodemailer';
+import db from '../db.js';
 
 const router = express.Router();
 
-// Configure email transporter with better settings for Render
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587, // Use port 587 instead of 465
-  secure: false, // Use STARTTLS instead of SSL
-  auth: {
-    user: process.env.EMAIL_USER || 'blockbridgescamguardai@gmail.com',
-    pass: process.env.EMAIL_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false // Allow self-signed certificates
-  }
-});
-
-// POST /api/contact
+// POST /api/contact - Save contact form submission to database
 router.post('/contact', async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
@@ -38,33 +24,12 @@ router.post('/contact', async (req, res) => {
       return res.status(400).json({ message: 'Invalid phone number format.' });
     }
     
-    // Prepare email content
-    const emailContent = `
-New Contact Form Submission - BlockBridge ScamGuard
-
-Name: ${name}
-Email: ${email}
-Phone: ${phone || 'Not provided'}
-Subject: ${subject}
-
-Message:
-${message}
-
----
-Reply to this email to respond directly to the user.
-For WhatsApp contact, use: ${phone || 'No phone provided'}
-    `.trim();
-    
-    // Send email to yourself
-    const mailOptions = {
-      from: process.env.EMAIL_USER || 'blockbridgescamguardai@gmail.com',
-      to: 'blockbridgescamguardai@gmail.com', // Your email
-      subject: `[BlockBridge Contact] ${subject}`,
-      text: emailContent,
-      replyTo: email // User can be reached at this email
-    };
-    
-    await transporter.sendMail(mailOptions);
+    // Save to database
+    await db.execute(
+      `INSERT INTO contact_messages (name, email, phone, subject, message, status, created_at) 
+       VALUES (?, ?, ?, ?, ?, 'pending', NOW())`,
+      [name, email, phone || null, subject, message]
+    );
     
     res.json({ 
       success: true, 
@@ -79,7 +44,7 @@ For WhatsApp contact, use: ${phone || 'No phone provided'}
   }
 });
 
-// POST /api/contact/report-scam
+// POST /api/contact/report-scam - Save scam report to database
 router.post('/contact/report-scam', async (req, res) => {
   try {
     const { url, whatsapp, emailContent, reporterEmail } = req.body;
@@ -89,30 +54,20 @@ router.post('/contact/report-scam', async (req, res) => {
       return res.status(400).json({ message: 'Please provide at least one suspicious item to report.' });
     }
     
-    // Prepare email content
-    const reportContent = `
-New Scam Report - BlockBridge ScamGuard
-
-Reporter Email: ${reporterEmail || 'Anonymous'}
-
-Suspicious URL: ${url || 'Not provided'}
-WhatsApp Message: ${whatsapp || 'Not provided'}
-Email Content: ${emailContent || 'Not provided'}
-
----
-This report has been logged for AI analysis.
-    `.trim();
-    
-    // Send email to yourself
-    const mailOptions = {
-      from: process.env.EMAIL_USER || 'blockbridgescamguardai@gmail.com',
-      to: 'blockbridgescamguardai@gmail.com',
-      subject: '[BlockBridge Scam Report] New Suspicious Activity',
-      text: reportContent,
-      replyTo: reporterEmail || process.env.EMAIL_USER
+    // Combine all report data
+    const reportData = {
+      url: url || null,
+      whatsapp: whatsapp || null,
+      email_content: emailContent || null,
+      reporter_email: reporterEmail || 'Anonymous'
     };
     
-    await transporter.sendMail(mailOptions);
+    // Save to database
+    await db.execute(
+      `INSERT INTO scam_reports (url, whatsapp_message, email_content, reporter_email, status, created_at) 
+       VALUES (?, ?, ?, ?, 'pending', NOW())`,
+      [reportData.url, reportData.whatsapp, reportData.email_content, reportData.reporter_email]
+    );
     
     res.json({ 
       success: true, 

@@ -132,6 +132,37 @@ export async function initDB() {
     ('prize-winner.com', 'SCAM', 'Prize scam site')
   `);
 
+  // NEW: Contact messages table
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS contact_messages (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      phone VARCHAR(50),
+      subject VARCHAR(255) NOT NULL,
+      message TEXT NOT NULL,
+      status ENUM('pending', 'replied', 'archived') DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_status (status),
+      INDEX idx_created_at (created_at)
+    )
+  `);
+
+  // NEW: Scam reports table
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS scam_reports (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      url TEXT,
+      whatsapp_message TEXT,
+      email_content TEXT,
+      reporter_email VARCHAR(255),
+      status ENUM('pending', 'reviewed', 'archived') DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_status (status),
+      INDEX idx_created_at (created_at)
+    )
+  `);
+
   console.log('Database tables ready.');
 }
 
