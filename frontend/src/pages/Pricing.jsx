@@ -36,7 +36,7 @@ const plans = [
     id: 'business',
     title: 'Business',
     price: '₹499',
-    period: '/ month',
+    period: '/ 3 months',
     badge: '🏆 Best Value',
     features: [
       'Everything in Pro',
@@ -63,9 +63,9 @@ const steps = [
 ];
 
 const faqs = [
-  { q: 'What\'s the difference between Pro and Business?', a: 'Pro (₹199/mo) includes 5 scanners and unlimited scans - perfect for individuals. Business (₹499/mo) adds Job & Investment fraud detectors, Team dashboard, API access, and Priority support - ideal for teams and companies.' },
+  { q: 'What\'s the difference between Pro and Business?', a: 'Pro (₹199/mo) includes 5 scanners and unlimited scans - perfect for individuals. Business (₹499/3mo) adds Job & Investment fraud detectors, Team dashboard, API access, and Priority support - ideal for teams and companies.' },
   { q: 'How long does activation take?', a: 'Once you submit your payment proof, our admin team verifies it within 24 hours and generates your activation key. You\'ll receive the key and can activate your subscription immediately.' },
-  { q: 'Can I cancel anytime?', a: 'Yes. Subscriptions are valid for the purchased period (30 days for Pro, 180 days for Business). No auto-renewal - you can choose to renew or not.' },
+  { q: 'Can I cancel anytime?', a: 'Yes. Subscriptions are valid for the purchased period (30 days for Pro, 90 days for Business). No auto-renewal - you can choose to renew or not.' },
   { q: 'Is payment secure?', a: 'Yes. All payments are made via UPI which is secure and encrypted. We only require you to upload a screenshot for verification purposes.' },
   { q: 'What if my payment is not verified?', a: 'If there\'s an issue with your payment proof, our admin team will reject it with a reason. You can resubmit with the correct information.' },
 ];
@@ -184,8 +184,9 @@ function Pricing() {
         <div className="payment-info-box">
           <h3>Payment Information</h3>
           <div className="payment-details">
-            <p><strong>UPI ID:</strong> blockbridge@upi</p>
-            <p><strong>Phone Number:</strong> +91 9876543210</p>
+            <p><strong>UPI ID:</strong> 6381487329@ybl</p>
+            <p><strong>Phone Number:</strong> +91 6381487329</p>
+            <p><strong>Email:</strong> blockbridgescamguardai@gmail.com</p>
             <p className="payment-note">After making payment, click "Upgrade to Pro" or "Go Business" to submit your proof</p>
           </div>
         </div>

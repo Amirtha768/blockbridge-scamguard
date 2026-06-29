@@ -185,8 +185,8 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Verify no Razorpay configuration in environment files
     - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 9. Payment Submission System
-  - [ ] 9.1 Update payment submission page UI
+- [x] 9. Payment Submission System
+  - [x] 9.1 Update payment submission page UI
     - Update frontend payment form to show UPI ID: 6381487329@ybl (or amirtha@okaxis)
     - Add QR code image upload for payment
     - Display amounts: PRO ₹199, BUSINESS ₹499
@@ -194,7 +194,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Add fields: name, email, transaction ID, screenshot upload
     - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8, 6.9_
   
-  - [ ] 9.2 Update payment submission backend
+  - [x] 9.2 Update payment submission backend
     - Verify routes/paymentRequestRoutes.js handles screenshot upload
     - Ensure transaction ID validation
     - Return success message with verification timeline (24 hours)
