@@ -110,6 +110,12 @@
 .payment-card p {
   margin: 8px 0;
   font-size: 14px;
+  color: #333;
+}
+
+.payment-card strong {
+  color: #1e3c72;
+  font-weight: 600;
 }
 
 .view-screenshot-button {
@@ -232,6 +238,7 @@
 .keys-table td {
   padding: 15px;
   border-bottom: 1px solid #f0f0f0;
+  color: #333;
 }
 
 .keys-table code {
@@ -296,6 +303,11 @@
   grid-template-columns: 1fr 1fr 1fr;
   padding: 15px;
   border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.activity-item span {
+  color: #555;
 }
 
 .loading {
@@ -303,4 +315,56 @@
   padding: 40px;
   font-size: 18px;
   color: #666;
+}
+
+/* Fix white text visibility - ensure all text is readable */
+.users-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.users-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  background: #f8f9fa;
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.users-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.modal-content h3 {
+  color: #1e3c72;
+  margin-bottom: 20px;
+}
+
+.modal-content p {
+  color: #666;
+  margin: 10px 0;
+}
+
+/* Ensure generated key is always visible */
+.generated-key-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
