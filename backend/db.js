@@ -31,6 +31,20 @@ export async function initDB() {
     )
   `);
 
+  // Add missing columns to existing users table (if they don't exist)
+  try {
+    await db.execute(`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS scans_today INT DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS scans_reset_date DATE DEFAULT NULL
+    `);
+  } catch (error) {
+    // Columns might already exist, ignore error
+    if (error.code !== 'ER_DUP_FIELDNAME') {
+      console.log('Note: scans columns might already exist');
+    }
+  }
+
   await db.execute(`
     CREATE TABLE IF NOT EXISTS payments (
       id INT AUTO_INCREMENT PRIMARY KEY,
