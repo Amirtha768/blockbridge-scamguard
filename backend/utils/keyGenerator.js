@@ -71,8 +71,8 @@ export function calculateExpiryDate(plan) {
     // 30 days for Pro
     return new Date(now.setDate(now.getDate() + 30));
   } else if (plan === 'BUSINESS') {
-    // 180 days for Business
-    return new Date(now.setDate(now.getDate() + 180));
+    // 90 days for Business (3 months)
+    return new Date(now.setDate(now.getDate() + 90));
   }
   return null;
 }

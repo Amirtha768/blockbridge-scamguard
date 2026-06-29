@@ -206,7 +206,7 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Test missing transaction ID error
     - _Requirements: 6.6, 6.7_
 
-- [-] 10. Admin Panel - Payment Approval Workflow
+- [x] 10. Admin Panel - Payment Approval Workflow
   - [x] 10.1 Update admin dashboard statistics
     - Implement GET /api/admin/stats to return: total users, pending payments, PRO users, BUSINESS users, today's scans
     - Update admin dashboard UI to display these statistics
@@ -246,19 +246,19 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Implement search/filter functionality
     - _Requirements: 9.11_
   
-  - [-] 10.8 Create users management page
+  - [x] 10.8 Create users management page
     - Add admin UI page to view all users
     - Display columns: Name, Email, Plan, Expiry Date
     - _Requirements: 9.12_
 
-- [ ] 11. Activation Key System - User Side
-  - [ ] 11.1 Create activation UI in user dashboard
+- [-] 11. Activation Key System - User Side
+  - [-] 11.1 Create activation UI in user dashboard
     - Add "Subscription" → "Activate Plan" button to dashboard
     - Create activation form with key input field
     - Display activation success/error messages
     - _Requirements: 12.1_
   
-  - [ ] 11.2 Verify activation backend logic
+  - [-] 11.2 Verify activation backend logic
     - Check POST /api/activation/activate endpoint validates key format
     - Ensure key existence check works
     - Verify key belongs to user
