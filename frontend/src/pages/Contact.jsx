@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import '../styles.css';
 import '../contact.css';
-import API from '../config.js';
 
 const faqs = [
   { q: 'How does scam detection work?', a: 'Our AI engine analyzes URLs, message patterns, domain reputation, and metadata to generate a real-time risk score.' },
@@ -13,108 +12,15 @@ const faqs = [
 const subjects = ['Scam Report', 'Technical Support', 'Business Inquiry', 'General Question'];
 
 function Contact() {
-  const [contactForm, setContactForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
-  const [contactErrors, setContactErrors] = useState({});
-  const [contactSent, setContactSent] = useState(false);
-  const [contactLoading, setContactLoading] = useState(false);
-
   const [reportForm, setReportForm] = useState({ url: '', whatsapp: '', emailContent: '', reporterEmail: '' });
   const [reportSent, setReportSent] = useState(false);
-  const [reportLoading, setReportLoading] = useState(false);
 
   const [openFaq, setOpenFaq] = useState(null);
 
-  function validateContact() {
-    const errs = {};
-    if (!contactForm.name.trim()) errs.name = 'Full name is required.';
-    if (!contactForm.email.trim()) errs.email = 'Email is required.';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactForm.email)) errs.email = 'Enter a valid email.';
-    if (contactForm.phone && !/^[+\d\s()-]{10,}$/.test(contactForm.phone)) errs.phone = 'Enter a valid phone number.';
-    if (!contactForm.subject) errs.subject = 'Please select a subject.';
-    if (!contactForm.message.trim()) errs.message = 'Message cannot be empty.';
-    return errs;
-  }
-
-  async function handleContactSubmit(e) {
+  function handleReportSubmit(e) {
     e.preventDefault();
-    const errs = validateContact();
-    if (Object.keys(errs).length) { setContactErrors(errs); return; }
-    
-    setContactErrors({});
-    setContactLoading(true);
-    
-    try {
-      // Add timeout to prevent hanging
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-      
-      const response = await fetch(`${API}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contactForm),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      const data = await response.json();
-      
-      if (response.ok) {
-        setContactSent(true);
-        setContactForm({ name: '', email: '', phone: '', subject: '', message: '' });
-      } else {
-        setContactErrors({ submit: data.message || 'Failed to send message. Please try again.' });
-      }
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        setContactErrors({ submit: 'Request timed out. The server may be waking up. Please try again in 30 seconds.' });
-      } else {
-        setContactErrors({ submit: 'Network error. Please check your connection and try again.' });
-      }
-    } finally {
-      setContactLoading(false);
-    }
-  }
-
-  async function handleReportSubmit(e) {
-    e.preventDefault();
-    
-    if (!reportForm.url && !reportForm.whatsapp && !reportForm.emailContent) {
-      alert('Please provide at least one suspicious item to report.');
-      return;
-    }
-    
-    setReportLoading(true);
-    
-    try {
-      // Add timeout to prevent hanging
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-      
-      const response = await fetch(`${API}/api/contact/report-scam`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reportForm),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      const data = await response.json();
-      
-      if (response.ok) {
-        setReportSent(true);
-        setReportForm({ url: '', whatsapp: '', emailContent: '', reporterEmail: '' });
-      } else {
-        alert(data.message || 'Failed to submit report. Please try again.');
-      }
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        alert('Request timed out. The server may be waking up. Please try again in 30 seconds.');
-      } else {
-        alert('Network error. Please check your connection and try again.');
-      }
-    } finally {
-      setReportLoading(false);
-    }
+    setReportSent(true);
+    setReportForm({ url: '', whatsapp: '', emailContent: '', reporterEmail: '' });
   }
 
   return (
@@ -128,100 +34,37 @@ function Contact() {
         </p>
       </section>
 
-      {/* 2. Contact Form + 3. Contact Info */}
-      <section className="contact-grid section">
-        <div className="section-card contact-form-card">
-          <p className="section-label">Contact Form</p>
+      {/* 2. Contact Info - PRIMARY */}
+      <section className="section">
+        <div className="section-intro">
+          <p className="section-label">Get in Touch</p>
+          <h2>Contact BlockBridge ScamGuard AI</h2>
+          <p>Have questions or need support? Reach out to us directly via email or WhatsApp.</p>
+        </div>
+        
+        <div className="contact-grid">
+          <div className="section-card contact-info-card">
+            <h3>📧 Email Support</h3>
+            <p className="contact-detail-large">blockbridgescamguardai@gmail.com</p>
+            <p className="contact-note">We respond within 24-48 hours</p>
+            <a href="mailto:blockbridgescamguardai@gmail.com" className="button button-primary">Send Email</a>
+          </div>
 
-          {contactSent ? (
-            <div className="form-success">
-              <span className="success-icon">✓</span>
-              <p>Message sent. We'll get back to you within 24–48 hours.</p>
-            </div>
-          ) : (
-            <form className="contact-form" onSubmit={handleContactSubmit} noValidate>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="name">Name</label>
-                  <input
-                    id="name" type="text" placeholder="Your full name"
-                    value={contactForm.name}
-                    onChange={e => setContactForm(p => ({ ...p, name: e.target.value }))}
-                    className={contactErrors.name ? 'input-error' : ''}
-                  />
-                  {contactErrors.name && <span className="field-error">{contactErrors.name}</span>}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    id="email" type="email" placeholder="you@example.com"
-                    value={contactForm.email}
-                    onChange={e => setContactForm(p => ({ ...p, email: e.target.value }))}
-                    className={contactErrors.email ? 'input-error' : ''}
-                  />
-                  {contactErrors.email && <span className="field-error">{contactErrors.email}</span>}
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="phone">Phone / WhatsApp <span className="optional">optional</span></label>
-                  <input
-                    id="phone" type="tel" placeholder="+91 1234567890"
-                    value={contactForm.phone}
-                    onChange={e => setContactForm(p => ({ ...p, phone: e.target.value }))}
-                    className={contactErrors.phone ? 'input-error' : ''}
-                  />
-                  {contactErrors.phone && <span className="field-error">{contactErrors.phone}</span>}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="subject">Subject</label>
-                  <select
-                    id="subject"
-                    value={contactForm.subject}
-                    onChange={e => setContactForm(p => ({ ...p, subject: e.target.value }))}
-                    className={contactErrors.subject ? 'input-error' : ''}
-                  >
-                    <option value="">Select a subject</option>
-                    {subjects.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  {contactErrors.subject && <span className="field-error">{contactErrors.subject}</span>}
-                </div>
-              </div>
-              <div className="form-group">
-                <label htmlFor="message">Message</label>
-                <textarea
-                  id="message" rows={5} placeholder="Describe your issue or question..."
-                  value={contactForm.message}
-                  onChange={e => setContactForm(p => ({ ...p, message: e.target.value }))}
-                  className={contactErrors.message ? 'input-error' : ''}
-                />
-                {contactErrors.message && <span className="field-error">{contactErrors.message}</span>}
-              </div>
-              {contactErrors.submit && <div className="field-error">{contactErrors.submit}</div>}
-              <button type="submit" className="button button-primary" disabled={contactLoading}>
-                {contactLoading ? 'Sending...' : 'Send Message'}
-              </button>
-            </form>
-          )}
+          <div className="section-card contact-info-card">
+            <h3>📱 WhatsApp / Phone</h3>
+            <p className="contact-detail-large">+91 6381487329</p>
+            <p className="contact-note">Available 9 AM - 6 PM IST (Mon-Sat)</p>
+            <a href="https://wa.me/916381487329" target="_blank" rel="noopener noreferrer" className="button button-primary">Chat on WhatsApp</a>
+          </div>
         </div>
 
-        <div className="contact-side">
-          {/* 3. Contact Info */}
-          <div className="section-card info-card">
-            <p className="section-label">Contact Info</p>
-            <div className="info-item">
-              <span className="info-label">Support Email</span>
-              <span className="info-value">blockbridgescamguardai@gmail.com</span>
-            </div>
-            <div className="info-item">
-              <span className="info-label">Phone Number</span>
-              <span className="info-value">+91 6381487329</span>
-            </div>
-            <div className="info-item">
-              <span className="info-label">Response Time</span>
-              <span className="info-value">Within 24–48 hours</span>
-            </div>
-          </div>
+        <div className="section-card" style={{marginTop: '2rem', textAlign: 'center', padding: '2rem'}}>
+          <p style={{fontSize: '1.1rem', color: '#666', marginBottom: '1rem'}}>
+            <strong>Need help with scam verification?</strong> Contact us with details of suspicious URLs, messages, or payment requests.
+          </p>
+          <p style={{color: '#999'}}>
+            For payment-related queries, please include your transaction ID or screenshot reference.
+          </p>
         </div>
       </section>
 
@@ -279,8 +122,8 @@ function Contact() {
                   />
                 </div>
               </div>
-              <button type="submit" className="button button-primary" disabled={reportLoading}>
-                {reportLoading ? 'Submitting...' : 'Report Scam to AI Team'}
+              <button type="submit" className="button button-primary">
+                Report Scam to AI Team
               </button>
             </form>
           )}

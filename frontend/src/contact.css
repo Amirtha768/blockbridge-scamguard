@@ -252,3 +252,36 @@
   .form-row { grid-template-columns: 1fr; }
   .contact-side { flex-direction: column; }
 }
+
+
+/* Contact Info Cards */
+.contact-info-card {
+  text-align: center;
+  padding: 2.5rem 2rem;
+}
+
+.contact-info-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.contact-detail-large {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #3498db;
+  margin: 1rem 0;
+  word-break: break-word;
+}
+
+.contact-note {
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.contact-info-card .button {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
