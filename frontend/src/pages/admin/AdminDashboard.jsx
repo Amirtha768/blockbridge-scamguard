@@ -7,6 +7,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [payments, setPayments] = useState([]);
   const [keys, setKeys] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -25,19 +26,22 @@ export default function AdminDashboard() {
     const token = localStorage.getItem('admin_token');
     
     try {
-      const [statsRes, paymentsRes, keysRes] = await Promise.all([
+      const [statsRes, paymentsRes, keysRes, usersRes] = await Promise.all([
         fetch(`${API_URL}/api/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } }),
         fetch(`${API_URL}/api/admin/payment-requests?status=PENDING`, { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch(`${API_URL}/api/admin/activation-keys`, { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(`${API_URL}/api/admin/activation-keys`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${API_URL}/api/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
 
       const statsData = await statsRes.json();
       const paymentsData = await paymentsRes.json();
       const keysData = await keysRes.json();
+      const usersData = await usersRes.json();
 
       if (statsRes.ok) setStats(statsData.stats);
       if (paymentsRes.ok) setPayments(paymentsData.requests);
       if (keysRes.ok) setKeys(keysData.keys);
+      if (usersRes.ok) setUsers(usersData.users);
     } catch (err) {
       console.error('Error fetching admin data:', err);
     } finally {
@@ -155,18 +159,31 @@ export default function AdminDashboard() {
         <button className={activeTab === 'overview' ? 'tab active' : 'tab'} onClick={() => setActiveTab('overview')}>Overview</button>
         <button className={activeTab === 'payments' ? 'tab active' : 'tab'} onClick={() => setActiveTab('payments')}>Payments ({payments.length})</button>
         <button className={activeTab === 'keys' ? 'tab active' : 'tab'} onClick={() => setActiveTab('keys')}>Keys ({keys.length})</button>
+        <button className={activeTab === 'users' ? 'tab active' : 'tab'} onClick={() => setActiveTab('users')}>Users ({users.length})</button>
       </nav>
 
       {activeTab === 'overview' && stats && (
         <div className="admin-content">
           <div className="stats-grid">
             <div className="stat-card">
+              <h3>Total Users</h3>
+              <div className="stat-number">{stats.totalUsers}</div>
+            </div>
+            <div className="stat-card">
               <h3>Pending Payments</h3>
               <div className="stat-number">{stats.pendingPayments}</div>
             </div>
             <div className="stat-card">
-              <h3>Active Subscriptions</h3>
-              <div className="stat-number">{stats.activeSubscriptions}</div>
+              <h3>PRO Users</h3>
+              <div className="stat-number">{stats.proUsers}</div>
+            </div>
+            <div className="stat-card">
+              <h3>BUSINESS Users</h3>
+              <div className="stat-number">{stats.businessUsers}</div>
+            </div>
+            <div className="stat-card">
+              <h3>Today's Scans</h3>
+              <div className="stat-number">{stats.todayScans}</div>
             </div>
             <div className="stat-card">
               <h3>Total Revenue</h3>
@@ -262,6 +279,42 @@ export default function AdminDashboard() {
                         <button onClick={() => handleRevokeKey(key.id)} className="revoke-button">Revoke</button>
                       )}
                     </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'users' && (
+        <div className="admin-content">
+          <h2>All Users</h2>
+          <div className="users-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Plan</th>
+                  <th>Status</th>
+                  <th>Expiry Date</th>
+                  <th>Registered</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr key={user.id}>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td><span className={`plan-badge plan-${user.plan.toLowerCase()}`}>{user.plan}</span></td>
+                    <td><span className={`status-badge status-${user.subscription_status.toLowerCase()}`}>{user.subscription_status}</span></td>
+                    <td>
+                      {user.subscription_end 
+                        ? new Date(user.subscription_end).toLocaleDateString() 
+                        : 'N/A'}
+                    </td>
+                    <td>{new Date(user.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

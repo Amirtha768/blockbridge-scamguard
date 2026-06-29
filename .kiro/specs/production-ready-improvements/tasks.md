@@ -206,19 +206,19 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Test missing transaction ID error
     - _Requirements: 6.6, 6.7_
 
-- [ ] 10. Admin Panel - Payment Approval Workflow
-  - [ ] 10.1 Update admin dashboard statistics
+- [-] 10. Admin Panel - Payment Approval Workflow
+  - [x] 10.1 Update admin dashboard statistics
     - Implement GET /api/admin/stats to return: total users, pending payments, PRO users, BUSINESS users, today's scans
     - Update admin dashboard UI to display these statistics
     - _Requirements: 9.1, 9.2, 9.4_
   
-  - [ ] 10.2 Enhance pending payments view
+  - [x] 10.2 Enhance pending payments view
     - Update admin UI to show payment requests table with columns: User, Plan, Amount, Transaction ID, Screenshot, Actions
     - Implement "View Screenshot" button that opens uploaded image
     - Add "Approve" and "Reject" buttons for each request
     - _Requirements: 9.5, 9.6_
   
-  - [ ] 10.3 Implement payment approval with key generation
+  - [x] 10.3 Implement payment approval with key generation
     - Update POST /api/admin/verify-payment endpoint
     - Ensure activation key is generated upon approval (format: BB-{PLAN}-{CODE})
     - Update payment request status to APPROVED
@@ -234,19 +234,19 @@ The plan follows an incremental approach where each task builds upon previous wo
     - **Property 10: Payment Approval Workflow**
     - **Validates: Requirements 9.6, 9.7, 9.8, 9.9, 9.10**
   
-  - [ ] 10.4 Implement payment rejection
+  - [x] 10.4 Implement payment rejection
     - Verify POST /api/admin/reject-payment endpoint works
     - Allow admin to add rejection notes
     - Update payment request status to REJECTED
     - _Requirements: 9.13_
   
-  - [ ] 10.7 Create activation keys management page
+  - [x] 10.7 Create activation keys management page
     - Add admin UI page to view all activation keys
     - Display columns: Key, Plan, Status (Used/Unused), Used By, Expiry
     - Implement search/filter functionality
     - _Requirements: 9.11_
   
-  - [ ] 10.8 Create users management page
+  - [-] 10.8 Create users management page
     - Add admin UI page to view all users
     - Display columns: Name, Email, Plan, Expiry Date
     - _Requirements: 9.12_

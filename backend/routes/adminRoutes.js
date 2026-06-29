@@ -440,12 +440,38 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
        LIMIT 10`
     );
 
+    // Get total users count
+    const [totalUsers] = await db.execute(
+      'SELECT COUNT(*) as count FROM users'
+    );
+
+    // Get PRO users count
+    const [proUsers] = await db.execute(
+      'SELECT COUNT(*) as count FROM users WHERE plan = \'PRO\''
+    );
+
+    // Get BUSINESS users count
+    const [businessUsers] = await db.execute(
+      'SELECT COUNT(*) as count FROM users WHERE plan = \'BUSINESS\''
+    );
+
+    // Get today's scans count
+    const today = new Date().toISOString().split('T')[0];
+    const [todayScans] = await db.execute(
+      'SELECT COUNT(*) as count FROM scan_history WHERE DATE(created_at) = ?',
+      [today]
+    );
+
     res.json({
       success: true,
       stats: {
         pendingPayments: pendingRequests[0].count,
         activeSubscriptions: activeSubscriptions[0].count,
         totalRevenue: revenue[0].total || 0,
+        totalUsers: totalUsers[0].count,
+        proUsers: proUsers[0].count,
+        businessUsers: businessUsers[0].count,
+        todayScans: todayScans[0].count,
         recentActivity
       }
     });
@@ -454,6 +480,47 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch statistics'
+    });
+  }
+});
+
+// GET /api/admin/users - Get all users
+router.get('/users', authenticateAdmin, async (req, res) => {
+  try {
+    const { search, plan } = req.query;
+
+    let query = `
+      SELECT id, name, email, plan, subscription_status, 
+             subscription_start, subscription_end, created_at
+      FROM users
+      WHERE 1=1
+    `;
+
+    const params = [];
+
+    if (search) {
+      query += ' AND (name LIKE ? OR email LIKE ?)';
+      params.push(`%${search}%`, `%${search}%`);
+    }
+
+    if (plan && ['FREE', 'PRO', 'BUSINESS'].includes(plan)) {
+      query += ' AND plan = ?';
+      params.push(plan);
+    }
+
+    query += ' ORDER BY created_at DESC';
+
+    const [users] = await db.execute(query, params);
+
+    res.json({
+      success: true,
+      users
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch users'
     });
   }
 });
