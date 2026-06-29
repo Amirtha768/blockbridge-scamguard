@@ -94,40 +94,64 @@ export async function calculateRisk(input, type) {
  * @param {Object} indicators - Indicators object to populate
  */
 async function analyzeURL(url, baseScore, indicators) {
-  // Check HTTPS
-  if (url.trim().toLowerCase().startsWith('https://')) {
-    indicators.hasHTTPS = true;
-  }
-
-  // Extract domain
-  const domain = extractDomain(url);
-  if (!domain) {
-    return;
-  }
-
-  // Check blacklist
-  indicators.isBlacklisted = await checkBlacklist(domain);
-
-  // Check if short URL
-  indicators.isShortURL = SHORT_URL_DOMAINS.some(shortDomain => 
-    domain.includes(shortDomain)
-  );
-
-  // Analyze domain age
-  const domainInfo = await analyzeDomain(url);
-  indicators.domainAge = domainInfo.age;
-  indicators.isNewDomain = domainInfo.isNew || isNewDomain(domainInfo.age);
-
-  // Count redirects (with timeout protection)
   try {
-    indicators.redirectCount = await countRedirects(url);
-  } catch (error) {
-    console.error('Redirect count error:', error);
-    indicators.redirectCount = 0;
-  }
+    // Check HTTPS
+    if (url.trim().toLowerCase().startsWith('https://')) {
+      indicators.hasHTTPS = true;
+    }
 
-  // Also check URL for suspicious keywords
-  analyzeText(url, baseScore, indicators);
+    // Extract domain
+    const domain = extractDomain(url);
+    if (!domain) {
+      return;
+    }
+
+    // Check blacklist (safe operation)
+    try {
+      indicators.isBlacklisted = await checkBlacklist(domain);
+    } catch (error) {
+      console.error('Blacklist check error:', error);
+      indicators.isBlacklisted = false;
+    }
+
+    // Check if short URL
+    indicators.isShortURL = SHORT_URL_DOMAINS.some(shortDomain => 
+      domain.includes(shortDomain)
+    );
+
+    // Analyze domain age (with timeout protection)
+    try {
+      const domainInfo = await Promise.race([
+        analyzeDomain(url),
+        new Promise(resolve => setTimeout(() => resolve({
+          domain, age: null, isNew: false, registrar: null
+        }), 3000))
+      ]);
+      indicators.domainAge = domainInfo.age;
+      indicators.isNewDomain = domainInfo.isNew || isNewDomain(domainInfo.age);
+    } catch (error) {
+      console.error('Domain analysis error:', error);
+      indicators.domainAge = null;
+      indicators.isNewDomain = false;
+    }
+
+    // Count redirects (with timeout protection - optional, don't block on this)
+    try {
+      const redirectPromise = countRedirects(url);
+      const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(0), 3000));
+      indicators.redirectCount = await Promise.race([redirectPromise, timeoutPromise]);
+    } catch (error) {
+      console.error('Redirect count error:', error);
+      indicators.redirectCount = 0;
+    }
+
+    // Also check URL for suspicious keywords
+    analyzeText(url, baseScore, indicators);
+  } catch (error) {
+    console.error('URL analysis error:', error);
+    // Continue with basic analysis even if URL-specific checks fail
+    analyzeText(url, baseScore, indicators);
+  }
 }
 
 /**

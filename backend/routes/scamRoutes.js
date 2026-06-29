@@ -26,59 +26,67 @@ function toDateStr(val) {
 }
 
 async function checkQuota(req, res) {
-  const [rows] = await db.execute(
-    'SELECT plan, scans_today, scans_reset_date FROM users WHERE id = ?',
-    [req.user.id]
-  );
-  if (!rows.length) { res.status(404).json({ message: 'User not found.' }); return false; }
+  try {
+    const [rows] = await db.execute(
+      'SELECT plan, scans_today, scans_reset_date FROM users WHERE id = ?',
+      [req.user.id]
+    );
+    if (!rows.length) { 
+      res.status(404).json({ message: 'User not found.' }); 
+      return false; 
+    }
 
-  const user = rows[0];
-  const today = getLocalDate();
-  const resetDate = toDateStr(user.scans_reset_date);
+    const user = rows[0];
+    const today = getLocalDate();
+    const resetDate = toDateStr(user.scans_reset_date);
 
-  // TEMPORARY FIX: Treat all users as FREE until database is properly reset
-  // This ensures scan counting works correctly
-  const treatAsFree = true; // Change to false after running reset script
+    // PRO and BUSINESS users: unlimited scans, just track usage
+    if (user.plan === 'PRO' || user.plan === 'BUSINESS') {
+      if (resetDate !== today) {
+        await db.execute(
+          'UPDATE users SET scans_today = 1, scans_reset_date = ? WHERE id = ?',
+          [today, req.user.id]
+        );
+      } else {
+        await db.execute(
+          'UPDATE users SET scans_today = scans_today + 1 WHERE id = ?',
+          [req.user.id]
+        );
+      }
+      return true; // No limit for PRO/BUSINESS
+    }
 
-  if (!treatAsFree && user.plan !== 'FREE') {
-    // PRO/BUSINESS users: track scans but no limit
+    // FREE users: check 5-scan daily limit
     if (resetDate !== today) {
+      // New day - reset counter
       await db.execute(
         'UPDATE users SET scans_today = 1, scans_reset_date = ? WHERE id = ?',
         [today, req.user.id]
       );
-    } else {
-      await db.execute(
-        'UPDATE users SET scans_today = scans_today + 1 WHERE id = ?',
-        [req.user.id]
-      );
+      return true;
     }
-    return true;
-  }
 
-  // For FREE users (or all users when treatAsFree=true), check limit
-  if (resetDate !== today) {
+    if (user.scans_today >= FREE_DAILY_LIMIT) {
+      // Limit reached
+      res.status(403).json({
+        message: `You've used all ${FREE_DAILY_LIMIT} free scans for today. Upgrade to PRO for unlimited scans.`,
+        upgrade: true,
+        scansLeft: 0,
+      });
+      return false;
+    }
+
+    // Increment scan count
     await db.execute(
-      'UPDATE users SET scans_today = 1, scans_reset_date = ? WHERE id = ?',
-      [today, req.user.id]
+      'UPDATE users SET scans_today = scans_today + 1 WHERE id = ?',
+      [req.user.id]
     );
     return true;
+  } catch (error) {
+    console.error('Quota check error:', error);
+    // On error, allow the scan to proceed (fail open for better UX)
+    return true;
   }
-
-  if (user.scans_today >= FREE_DAILY_LIMIT) {
-    res.status(403).json({
-      message: `You've used all ${FREE_DAILY_LIMIT} free scans for today.`,
-      upgrade: true,
-      scansLeft: 0,
-    });
-    return false;
-  }
-
-  await db.execute(
-    'UPDATE users SET scans_today = scans_today + 1 WHERE id = ?',
-    [req.user.id]
-  );
-  return true;
 }
 
 /**
@@ -105,16 +113,31 @@ router.get('/scan/quota', authenticate, async (req, res) => {
     );
     if (!rows.length) return res.status(404).json({ message: 'User not found.' });
     
-    const user      = rows[0];
-    const today     = getLocalDate();
+    const user = rows[0];
+    const today = getLocalDate();
     const resetDate = toDateStr(user.scans_reset_date);
     const scansUsed = resetDate === today ? (user.scans_today || 0) : 0;
     
-    // TEMPORARY FIX: Always treat as FREE user and calculate scansLeft
-    // Remove this after database is reset properly
-    const scansLeft = Math.max(0, FREE_DAILY_LIMIT - scansUsed);
+    // Plan-specific limits
+    let limit, scansLeft;
+    if (user.plan === 'PRO') {
+      limit = 50; // PRO: 50 scans/day
+      scansLeft = Math.max(0, limit - scansUsed);
+    } else if (user.plan === 'BUSINESS') {
+      limit = -1; // BUSINESS: unlimited (show as -1)
+      scansLeft = -1; // unlimited
+    } else {
+      // FREE plan
+      limit = FREE_DAILY_LIMIT; // 5 scans/day
+      scansLeft = Math.max(0, limit - scansUsed);
+    }
     
-    res.json({ plan: 'FREE', scansUsed, scansLeft, limit: FREE_DAILY_LIMIT });
+    res.json({ 
+      plan: user.plan || 'FREE',
+      scansUsed, 
+      scansLeft, 
+      limit 
+    });
   } catch (err) {
     console.error('quota error:', err);
     res.status(500).json({ message: 'Server error.' });
