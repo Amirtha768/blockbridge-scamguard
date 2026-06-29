@@ -44,12 +44,18 @@ function Contact() {
     setContactLoading(true);
     
     try {
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
       const response = await fetch(`${API}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contactForm)
+        body: JSON.stringify(contactForm),
+        signal: controller.signal
       });
       
+      clearTimeout(timeoutId);
       const data = await response.json();
       
       if (response.ok) {
@@ -59,7 +65,11 @@ function Contact() {
         setContactErrors({ submit: data.message || 'Failed to send message. Please try again.' });
       }
     } catch (error) {
-      setContactErrors({ submit: 'Network error. Please check your connection and try again.' });
+      if (error.name === 'AbortError') {
+        setContactErrors({ submit: 'Request timed out. The server may be waking up. Please try again in 30 seconds.' });
+      } else {
+        setContactErrors({ submit: 'Network error. Please check your connection and try again.' });
+      }
     } finally {
       setContactLoading(false);
     }
@@ -76,12 +86,18 @@ function Contact() {
     setReportLoading(true);
     
     try {
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
       const response = await fetch(`${API}/api/contact/report-scam`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reportForm)
+        body: JSON.stringify(reportForm),
+        signal: controller.signal
       });
       
+      clearTimeout(timeoutId);
       const data = await response.json();
       
       if (response.ok) {
@@ -91,7 +107,11 @@ function Contact() {
         alert(data.message || 'Failed to submit report. Please try again.');
       }
     } catch (error) {
-      alert('Network error. Please check your connection and try again.');
+      if (error.name === 'AbortError') {
+        alert('Request timed out. The server may be waking up. Please try again in 30 seconds.');
+      } else {
+        alert('Network error. Please check your connection and try again.');
+      }
     } finally {
       setReportLoading(false);
     }
