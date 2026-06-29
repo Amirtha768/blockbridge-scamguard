@@ -87,17 +87,7 @@ const comparison = [
   { feature: 'Support',                free: 'Email',    pro: 'Email',     biz: 'Priority 24/7' },
 ];
 
-function loadRazorpayScript() {
-  return new Promise(resolve => {
-    if (document.getElementById('razorpay-script')) return resolve(true);
-    const s = document.createElement('script');
-    s.id = 'razorpay-script';
-    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    s.onload = () => resolve(true);
-    s.onerror = () => resolve(false);
-    document.body.appendChild(s);
-  });
-}
+// REMOVED: Razorpay script loading - Manual payment system now used
 
 function Pricing() {
   const [openFaq, setOpenFaq] = useState(null);

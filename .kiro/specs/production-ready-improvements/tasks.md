@@ -166,15 +166,15 @@ The plan follows an incremental approach where each task builds upon previous wo
     - Test plan restrictions work correctly
     - _Requirements: 3.10, 3.11_
 
-- [ ] 8. Remove Razorpay Integration
-  - [ ] 8.1 Backend Razorpay removal
+- [x] 8. Remove Razorpay Integration
+  - [x] 8.1 Backend Razorpay removal
     - Remove razorpay package from backend/package.json
     - Delete or comment out Razorpay code in routes/paymentRoutes.js
     - Remove Razorpay environment variables from .env
     - Keep payment_requests routes intact (manual payment system)
     - _Requirements: 6.1, 6.2, 6.3_
   
-  - [ ] 8.2 Frontend Razorpay removal
+  - [x] 8.2 Frontend Razorpay removal
     - Remove Razorpay script tags from frontend HTML
     - Remove Razorpay checkout initialization code
     - Remove VITE_RAZORPAY_KEY_ID from frontend .env
