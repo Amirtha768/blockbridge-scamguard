@@ -284,34 +284,34 @@ The plan follows an incremental approach where each task builds upon previous wo
   - Verify activation key uniqueness
   - Ask the user if questions arise
 
-- [-] 13. Enhanced Dashboard - Frontend
-  - [ ] 13.1 Create Recent Scan History component
+- [x] 13. Enhanced Dashboard - Frontend
+  - [x] 13.1 Create Recent Scan History component
     - Display last 5-10 scans on dashboard
     - Show columns: Date & Time, Scan Type, Result, Risk Score
     - Add color-coded status indicators (Green/Yellow/Orange/Red)
     - Add "View All History" button linking to full history page
     - _Requirements: 4.1, 4.2_
   
-  - [ ] 13.2 Create AI Insights component
+  - [x] 13.2 Create AI Insights component
     - Implement insights section on dashboard
     - Display trending scam alerts based on aggregate data
     - Show statistics like "Most detected scams", "QR scams increased by X%"
     - Include safety recommendations
     - _Requirements: 4.4, 15.1, 15.2, 15.3, 15.6_
   
-  - [ ] 13.3 Create Notifications panel
+  - [x] 13.3 Create Notifications panel
     - Display cybersecurity notifications on dashboard
     - Show alerts about new phishing campaigns, trending scams
     - Include security tips and best practices
     - _Requirements: 15.4, 15.5_
   
-  - [ ] 13.4 Update dashboard statistics display
+  - [x] 13.4 Update dashboard statistics display
     - Show: Scans Today, Current Plan, Scans Left (for FREE users)
     - Display subscription expiry date for PRO/BUSINESS users
     - _Requirements: 4.3_
 
 - [ ] 14. Scan History Page - Frontend
-  - [ ] 14.1 Create full scan history page
+  - [-] 14.1 Create full scan history page
     - Build table component with columns: Date, Scanner, Result, Risk Score
     - Implement pagination for large datasets
     - Add "Download PDF Report" buttons for individual scans

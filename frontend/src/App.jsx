@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import PaymentUpload from './pages/PaymentUpload';
 import MyPayments from './pages/MyPayments';
 import ActivateSubscription from './pages/ActivateSubscription';
+import ScanHistory from './pages/ScanHistory';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
@@ -18,7 +19,7 @@ function getRoute() {
   const route = hash.replace(/^#/, '');
   const valid = [
     '/', '/about', '/contact', '/pricing', '/login', '/product', '/dashboard',
-    '/payment-upload', '/my-payments', '/activate', '/admin/login', '/admin/dashboard'
+    '/payment-upload', '/my-payments', '/activate', '/scan-history', '/admin/login', '/admin/dashboard'
   ];
   return valid.includes(route) ? route : '/';
 }
@@ -42,6 +43,9 @@ function App() {
   if (route === '/payment-upload') return <PaymentUpload />;
   if (route === '/my-payments') return <MyPayments />;
   if (route === '/activate') return <ActivateSubscription />;
+  
+  // Scan history page — full screen
+  if (route === '/scan-history') return <ScanHistory />;
 
   // Admin pages — full screen
   if (route === '/admin/login') return <AdminLogin />;
